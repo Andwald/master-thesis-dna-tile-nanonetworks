@@ -1,0 +1,3095 @@
+\chapter{Simulationen}
+\label{cha:simulationen}
+
+In diesem Kapitel steht nach der Darstellung von Konzept und Struktur der Anforderungen die Evaluation der Simulationsergebnisse an. Einige dieser Ergebnisse werden mithilfe von Boxplots präsentiert, da diese eine umfassende Darstellung der Messwerte ermöglichen: Sie zeigen das Minimum und Maximum sowie den Median und die Quartile. Dadurch wird die gesamte Messreihe kompakt dargestellt. Die vorgestellte Simulationsumgebung NetTAS dient zur Generierung der Messergebnisse. Zunächst wird die Gewichtung bei der Generierung von Tilesets untersucht. Danach werden für acht durch das Skript generierte und in NetTAS erstellte Tilesets Simulation und Evaluation von Acknowledgements, Prioritätleveln, Flags, Prüfsummen und Snaked-Proofreading durchgeführt.
+
+\section{Simulation und Evaluation der Gewichtungen zur Generierung von Tilesets}
+
+Zur Evaluation und Analyse der im vorherigen Kapitel vorgestellten und implementierten Anforderungen werden Tilesets zur Simulation und Evaluation benötigt. Vier Tilesets wurden in NetTAS erstellt. Diese Tilesets werden später in diesem Kapitel noch genauer beschrieben. Vier weitere Tilesets wurden mit dem Skript generiert. Bei der Beschreibung des Vorgangs im vorherigen Kapitel wurde jedoch eine sinnvolle Gewichtung zwischen Tileset- und Assemblygröße offengelassen.
+
+So muss zunächst die Generierung von Tilesets analysiert werden. Da die Tilegenerierung von drei Faktoren abhängt, müssen diese zuerst betrachtet und analysiert werden. Die Anzahl an Nachrichten in einem System ist zwar eine anwendungsabhängige Eingabe, jedoch muss für unterschiedlich große Nachrichtensätze gute Gewichtungen von Tileset und Assembly gefunden werden. Dabei ist erneut anzumerken, dass eine \glqq gute Gewichtung\grqq\, anwendungsabhängig sein kann.
+
+Eine gute Gewichtung wird hier durch die Simulationsumgebung NetTAS gefunden, indem das Tileset und die Self-Assembly in \texttt{kTAM} simuliert wird. In \texttt{kTAM} wird durch die Bond Breaking Cost und Binding Cost definiert, wie sich ein zufällig an einer Stelle der Self-Assembly gebundenes Tile bindet oder löst. Dies ist in der Simulation abhängig von der Größe der Self-Assembly, da so mehr mögliche Wachstumsfronten entstehen. Auch die Größe des Tilesets beeinflusst die Simulation, da häufiger \glqq falsche\grqq\, Bindungen getestet werden. 
+
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingTilesetWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,10)(2.0,10)(3.0,12)(40.0,12)}
+        {(1.0,4)(2.0,4)(3.0,3)(40.0,3)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 10}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingTilesetWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,17)(5.0,17)(6.0,22)(40.0,22)}
+        {(1.0,5)(5.0,5)(6.0,4)(40.0,4)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 100}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingTilesetWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,22)(4.0,22)(5.0,26)(6.0,26)(7.0,32)(34.0,32)(35.0,66)(40.0,66)}
+        {(1.0,7)(4.0,7)(5.0,6)(6.0,6)(7.0,5)(34.0,5)(35.0,4)(40.0,4)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 1000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingTilesetWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,30)(2.0,30)(3.0,32)(5.0,32)(6.0,42)(26.0,42)(27.0,68)(40.0,68)}
+        {(1.0,9)(2.0,9)(3.0,8)(5.0,8)(6.0,6)(26.0,6)(27.0,5)(40.0,5)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 10000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingAssemblyWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,17)(3.0,17)(4.0,16)(40.0,16)}
+        {(1.0,5)(3.0,5)(4.0,9)(40.0,9)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 100}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+        \plottingAssemblyWeights
+        {40}{1}{70}
+        {40}{1}{15}
+        {(1.0,30)(2.0,29)(40.0,29)}
+        {(1.0,9)(2.0,11)(40.0,11)}
+        \end{tikzpicture}
+        \caption{Nachrichtenanzahl = 10000}
+    \end{subfigure}
+    \caption[Graphen zur Relation von Gewichtungen zur Nachrichtenmenge]{Graphen zur Relation von Gewichtungen und Anzahl von zu codierenden Nachrichten. Die Anzahl der Nachrichten ist unter den Graphen abgebildet. Die Graphen (a) bis (d) stellen die Tileset:Assembly Gewichtung mit wachsender Tileset-Gewichtung dar, (e) und (f) mit wachsender Assembly-Gewichtung. In den Graphen ist die Tilesetgröße an der linken y-Achse und Assemblygröße an der rechten y-Achse dargestellt.}
+    \label{fig:eval_gewichtungen}
+\end{figure}
+
+Dieser Faktor ist eine der größten Schwächen von \texttt{kTAM}, da in einer realitätsnäheren Betrachtung nicht immer nur ein zufälliges Tile an einer zufälligen Stelle versucht eine Bindung aufzubauen. In der Realität läuft dies parallel an allen Stellen mit mehreren Tiles ab. Doch für die Betrachtung und Analyse der Gewichtungen von Tileset und Assembly hilft es dabei eine Argumentationsbasis aufzubauen. Braucht kTAM bedeutend länger für die Bildung einer Self-Assembly, dann kann davon ausgegangen werden, dass die Gewichtung falsch gewählt wurde, weil entweder die Assembly oder das Tileset in Relation zum jeweils anderen zu groß gewählt wurde. 
+
+Mit dieser Information können Tilesets mit unterschiedlichen Gewichtungen erstellt werden. Dafür werden verschiedene Nachrichtenanzahlen verwendet und durch unterschiedliche Gewichtungen auf die Größe von Tileset und Assembly getestet. Dies ist in Abbildung~\ref{fig:eval_gewichtungen} abgebildet. "In Abbildung 6.1 wird die Gewichtung zwischen Tileset und Assembly dargestellt. Für das Tileset-Gewicht wird ein Spektrum bis zu einer Gewichtung von 100:1 im Vergleich zur Assembly untersucht. Umgekehrt wird für das Assembly-Gewicht eine Betrachtung bis zu einer Gewichtung von 1:100 vorgenommen. Gewichtungen darüber werden nicht betrachtet. Die Temperatur des Systems wird auf zwei festgelegt.
+
+Aus der Abbildung~\ref{fig:eval_gewichtungen} lässt sich entnehmen, welche Gewichtungen für eine gegebene Nachrichtenmenge angemessen sind. Bei einer kleinen Nachrichtenmenge machen Verhältnisse wie $1:4$ und $1:40$ keinen Unterschied, daher genügt die Simulation eines Verhältnisses. Aus den Abbildungen zeigt sich, dass für Nachrichtenanzahlen unter $1000$ relativ ähnliche Verhältnisse getestet werden können. Bei höheren Nachrichtenzahlen sollte ein größeres Verhältnis berücksichtigt werden. Gemäß den Gewichtungen aus Abbildung~\ref{fig:eval_gewichtungen} e) und f) erhält das Tileset ein größeres Gewicht als die Assembly. Sowohl bei kleinen als auch großen Nachrichtenmengen bleibt die Größe des Tilesets und der Assembly für bereits geringe Verhältnisse konstant. Alle sechs Graphen bilden das Verhältnis zwar nur bis zur Gewichtung von \texttt{40:1}, beziehungsweise \texttt{1:40} ab, jedoch wurden alle Verhältnisse bis zu der Gewichtung \texttt{1:100} und \texttt{100:1} getestet. In keinem der Fälle gab es zwischen $40$ und $100$ weitere Veränderungen in Tileset- und Assemblygröße. So werden nun folgende Simulationen durchgeführt, um eine sinnvolle Gewichtung von Tileset- und Assemblygröße für den Rest der Evaluation zu finden. Dafür werden die Nachrichtenmengen und Gewichtungen wie folgt gewählt:
+\begin{description}
+    \item[Nachrichtenmenge $10$:] \texttt{1:1, 1:3, 4:1}
+    \item[Nachrichtenmenge $100$:] \texttt{1:1, 1:5, 1:6, 4:1}
+    \item[Nachrichtenmenge $1.000$:] \texttt{1:1, 1:5, 1:7, 1:35, 2:1}
+    \item[Nachrichtenmenge $10.000$:] \texttt{1:3, 1:6, 1:27, 1:1, 2:1}
+\end{description}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{lrrrr}
+         & \multicolumn{4}{c}{Nachrichtenmenge} \\
+        Verhältnis & 10 & 100 & 1.000 & 10.000\\\hline 
+        \texttt{4:1} & 122 & 1.425 &  &  \\
+        \texttt{2:1} &  &  & 735 & 3.153 \\
+        \texttt{1:1} & \underline{106} & 335 & 1249 &  \\
+        \texttt{1:3} & 109 &  &  & 1.316 \\
+        \texttt{1:5} &  & 353 & 1.038 &  \\
+        \texttt{1:6} &  & \underline{250} &  & 1.214 \\
+        \texttt{1:7} &  &  & \underline{531} &  \\
+        \texttt{1:27} &  &  &  & \underline{1.021} \\
+        \texttt{1:35} &  &  & 721 &   \\\hline
+    \end{tabular}
+    \caption[Simulationsergebnisse für verschiedene Gewichtungsverhältnisse]{Darstellung des Medians der Messergebnisse in \texttt{kTAM} für verschiedene Verhältnisse (Tileset:Assembly), die aus Abbildung~\ref{fig:eval_gewichtungen} entnommen wurden. Zur Berechnung der dargestellten Werte wurden 20 Simulationsdurchläufe in \texttt{kTAM} durchgeführt. Angesichts signifikanter Ausreißer wurde der Median für alle 20 Durchläufe bestimmt und dann die 15 \% der Messungen mit dem größten Abstand zum Median ausgeschlossen. Nachdem so die drei größten Ausreißer entfernt wurden, wurde der Median der verbleibenden 17 Messungen genommen. Diese Ergebnisse sind hier abgebildet. Für jede Nachrichtenmenge wurde die niedrigste Messung unterstrichen.}
+    \label{tab:eval_weights}
+\end{table}
+
+Für die Messungen in Tabelle~\ref{tab:eval_weights} wurden 20 Messungen in \texttt{kTAM} durchgeführt. Die generierten Daten wurden mit Temperatur zwei erstellt und die dafür gewählten Parameter in \texttt{kTAM} sind wie folgt gewählt:
+\begin{description}
+    \item[Sleep Time:] $10$
+    \item[Forward Rate:] $10$
+    \item[Binding Cost:] $16$ 
+    \item[Bond Breaking Cost:] $11$
+\end{description}
+Die Werte für \emph{Binding Cost} und \emph{Bond Breaking Cost} sind passend zur Temperatur zwei gewählt. Um größere Moleküle in realistischer Zeit simulieren zu können, müssen die Kosten für die Bindung von Tiles in einem System der Temperatur zwei unter $20$ gewählt werden. Jede niedriger der Wert, desto wahrscheinlicher bindet und hält sich jedoch eine Verbindung mit Stärke eins. Dementsprechend darf der Wert nicht zu niedrig sein, da sonst fehlerhafte Verbindungen entstehen können. Bei Kosten zum Brechen von Verbindungen von über elf wird gewährleistet, dass Verbindungen der Stärke eins schnell wieder getrennt werden. Gleichzeitig brechen Verbindungen der Stärke zwei nur selten, wodurch auch größere Moleküle stabil gebunden werden können. Auch folgt aus niedrigerer \emph{Binding Cost} und höherer \emph{Bond Breaking Cost} eine geringe Zahl von Ausreißern im \emph{kTAM}. Somit kann ein leicht angepasster Median auf die Messungen angewandt werden. Bei 20 Messungen kann ein Cutoff von 15 \% für den Median gewählt werden. So wird zunächst der Median der gesamten Messreihe berechnet. Für den Cutoff werden die drei Messwerte aus der Reihe entfernt, die den größten Abstand zum Median haben. Aus den restlichen 17 Messwerten wird erneut der Median berechnet. Aus den Messungen in Tabelle~\ref{fig:eval_gewichtungen} kann gelesen werden, dass sich das Verhältnis in Relation zur Nachrichtenmenge verhält. Bei einer großen Nachrichtenmenge (hier: $10000$) sollte ein Verhältnis gewählt werden, das die Größe der Assembly stärker gewichtet. Bei kleinen Nachrichtenmengen kann dieses Verhältnis kleiner gewählt werden. Jedoch sollte trotzdem die Assembly ein klar größeres Gewicht haben. Nur bei kleinen Nachrichtenmengen kann die Gewichtung gleichmäßig gewählt werden. Dem Tileset ein höheres Gewicht zuzuordnen, ist für keine der gegebenen Nachrichtenmengen ratsam. Ein solches Vorgehen würde in der Simulation zu einer erhöhten Anzahl an Schritten führen.
+
+\section{Die Tilesets}
+
+Mit diesen ersten Simulationsergebnissen können im Folgenden Datensätze generiert werden, um die Mechanismen aus Kapitel~\ref{cha:konzept} simulieren und evaluieren zu können. Um alle Anforderungen vergleichen zu können, werden die acht Tilesets erstellt, die in Abbildung~\ref{fig:sim_assemblies} dargestellt werden. Ihre Parameter und Eigenschaften sind in Tabelle~\ref{tab:eval_gen_tilesets} und Tabelle~\ref{tab:eval_build_tilesets} abgebildet. 
+
+\begin{table}
+    \centering
+    \begin{tabular}{lrrrr}
+        Name & \texttt{H-1-mini} & \texttt{H-1-klein} & \texttt{H-1-norm} & \texttt{H-1-groß} \\\hline
+        Tilset Größe & 10 & 22 & 32 & 68 \\[1ex]
+        Assembly Höhe & 1 & 1 & 1 & 1 \\[1ex]
+        Assembly Länge & 4 & 4 & 5 & 5 \\[1ex]
+        Nachrichtenanzahl & 10 & 100 & 1000 & 10000 \\
+        \multirow{2}{*}{Tileset:Assembly} & \raisebox{-2.2ex}{1:1} & \raisebox{-2.2ex}{1:6} & \raisebox{-2.2ex}{1:7} & \raisebox{-2.2ex}{1:27}\\[0.7ex]
+        Gewichtung\\\hline
+    \end{tabular}
+    \caption[Automatisch generierte Tilesets für Simulation und Analyse]{Darstellung der in diesem Kapitel zur Simulation verwendeten Tilesets mit einigen Parametern. Die Tilesets in dieser Tabelle sind alle durch das vorgestellte Skript generiert worden und haben dementsprechend in der Assembly eine Höhe von eins. Die nicht generierten Tilesets sind in Tabelle~\ref{tab:eval_build_tilesets} dargestellt.}
+    \label{tab:eval_gen_tilesets}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{lrrrr}
+        Name & \texttt{H-2-klein} & \texttt{H-2-norm} & \texttt{H-3-klein} & \texttt{H-3-norm}\\\hline
+        Tilset Größe & 6 & 22 & 9 & 26 \\[1ex]
+        Assembly Höhe & 2 & 2 & 3 & 3 \\[1ex]
+        Assembly Länge & 3 & 5 & 3 & 5 \\\hline
+    \end{tabular}
+    \caption[In NetTAS erstellte Tilesets für Simulation und Analyse]{Darstellung der in diesem Kapitel zur Simulation verwendeten Tilesets mit einigen Parametern. Die Tilesets in dieser Tabelle wurden alle in NetTAS erstellt. Die generierten Tilesets sind in Tabelle~\ref{tab:eval_gen_tilesets} dargestellt.}
+    \label{tab:eval_build_tilesets}
+\end{table}
+
+Die Tilesets wurden aus folgenden Gründen ausgewählt: Im Sinne des im vorherigen Kapitel vorgestellten Skriptes werden nur Moleküle erstellt und getestet, die durch das Skript entweder generiert oder erweitert werden können. Somit werden Tilesets für Assemblies der Höhe ein, zwei und drei erstellt. Für die Höhe zwei und drei wird jeweils ein Tileset mit minimalen Tiles erstellt und ein Tileset mit einigen Variationsmöglichkeiten in der finalen Assembly. Für die Moleküle der Höhe eins werden vier verschiedene Größen in Hinsicht auf die Nachrichtenanzahl generiert und für weitere Simulationen verwendet. 
+
+Die Eigenschaften der Tilesets können in den Simulationsergebnissen von 2HAM dargestellt werden. Diese Ergebnisse sind in Tabelle~\ref{tab:2HAM_assemblies} dargestellt. Aus der Tabelle lassen sich die maximalen Assemblygrößen für alle Tilesets ablesen. Auch kann bei der jeweils maximalen Größe die Anzahl an verschiedenen Assemblies erkannt werden, die durch das Tileset gebildet werden können.
+
+\begin{table}
+    \begin{tabular}{lrrrrrrrr}
+        Größe & 1-mini & 1-klein & 1-norm & 1-groß & 2-klein & 2-norm & 3-klein & 3-norm\\\hline
+        1 & 10 & 22  & 32   & 68    & 6 & 22 & 9 & 26\\
+        2 & 24 & 120 & 220  & 1012  & 3 & 25 & 5 & 26\\
+        3 & 32 & 200 & 1200 & 11616 & 1 & 39 & 3 & 29\\
+        4 & 16 & 100 & 2000 & 21296 & 1 & 39 & 2 & 36\\
+        5 & -  & -   & 1000 & 10648 & 1 & 36 & 1 & 68\\
+        6 & -  & -   & -    & -     & 1 & 36 & 1 & 128\\
+        7 & -  & -   & -    & -     & 1 & 27 & 1 & 200\\
+        8 & -  & -   & -    & -     & 1 & 27 & 2 & 288\\
+        9 & -  & -   & -    & -     & - & 27 & 1 & 400\\
+        10 & - & -   & -    & -     & - & 27 & - & 672\\
+        11 & - & -   & -    & -     & - & -  & - & 960\\
+        12 & - & -   & -    & -     & - & -  & - & 1088\\
+        13 & - & -   & -    & -     & - & -  & - & 512\\
+        14 & - & -   & -    & -     & - & -  & - & 512\\
+        15 & - & -   & -    & -     & - & -  & - & 192\\
+        16 & - & -   & -    & -     & - & -  & - & - \\\hline
+    \end{tabular}
+    \caption[2HAM Ergebnisse]{2HAM Ergebnisse für alle acht erstellten Tilesets. Das führende \glqq H-\grqq\, in den Namen der Tilesets wurde in dieser Tabelle aus Platzgründen weggelassen. Aus diesen Ergebnissen lässt sich ablesen, ob eine abgeschlossene Assembly erreicht wird und dass das Molekül nicht unendlich durch einen Fehler wächst. Auch kann anhand des Wertes der größten Assembly (beispielsweise 1000 für Assemblies der Größe fünf für \texttt{H-1-norm}) festgestellt werden, ob die richtige Anzahl an möglichen Molekülen gebildet werden.}
+    \label{tab:2HAM_assemblies}
+\end{table}
+
+So kann abgelesen werden, das \texttt{H-2-klein} nur ein eindeutiges finales Molekül mit sechs Tiles in der Assembly  bilden kann, während \texttt{H-2-norm} 27 Assemblies der Größe zehn bilden kann. Da die Tabelle hier für noch eher kleine Tilesets bereits sehr groß wird, werden die Ergebnisse für 2HAM für keine weiteren Tilesets dargestellt. Die 2HAM-Simulationen für die Tilesets \texttt{H-1-groß} und \texttt{H-3-norm} erwiesen sich außerdem bereits in ihrer Grundform als besonders zeitaufwendig. 
+
+Dementsprechend werden im Folgenden alle getesteten Implementierungen nur auf den Tilesets \texttt{H-1-mini}, \texttt{H-2-klein} und \texttt{H-3-klein} in 2HAM getestet, um evaluieren zu können, ob die Tilesets und Assemblies korrekt und fehlerfrei erweitert werden. Die Ergebnisse werden wie beschrieben nicht tabellarisch dargestellt. Wenn in den jeweiligen Absätzen nichts Weiteres beschrieben wird, kann davon ausgegangen werden, dass die 2HAM-Simulationen wie beschrieben durchgeführt wurden. Nur wenn unerwartete Ergebnisse oder Probleme in der 2HAM Simulation entstanden sind, werden diese Simulationen erwähnt. 
+
+Bei der 2HAM-Simulation von \texttt{H-3-norm} trat ein Problem mit dem Tileset auf. Für eine Assemblygröße von 15 wurden mehr Assemblies gefunden, als durch die Konstruktion des Tilesets erwartet wurde. Das Tileset sollte 64 verschiedene Self-Assemblies der Größe 15 darstellen. Doch in Tabelle~\ref{tab:2HAM_assemblies} zeigt sich, dass 192 solcher Self-Assemblies in 2HAM gefunden wurden. Dabei handelt es sich um einen Facet-Error, der in der Sektion~\ref{sec:snaked_proof_tiles} bei der Evaluation von Snaked-Proofreading näher betrachtet wird.
+
+Des Weiteren ist vor der Evaluation der Mechanismen anzumerken, dass das Assembly-Modell kTHAM und die Simulation dieses Modells in NetTAS nur durchgeführt wurde. Das Modell ist zwar für dieses Kapitel interessant, allerdings stand zum Zeitpunkt der Arbeit nicht die nötige Rechenleistung zur Verfügung, um kTHAM für alle betrachteten Tilesets durchführen zu können. Während die Tilesets \texttt{H-1-mini}, \texttt{H-2-klein} und \texttt{H-3-klein} in kTHAM simuliert wurden, erwiesen sich schon die Simulationen der unmodifizierten Tilesets als sehr rechenaufwendig. Bei allen anderen getesteten Tilesets dauerte die Berechnung einzelner Iterationen mehrere Minuten bis Stunden. Bei der Durchführung dieser Simulationen kam es zum Einfrieren der Anwendung. Es war möglich, einige kleinere Simulationen abzuschließen, jedoch sind einzelne Iterationen nicht unbedingt repräsentativ. Für eine aussagekräftige Datenbasis wären 20 bis 30 Messungen besser. Da die Durchführung so vieler Messungen für einzelne Tilesets aus Zeitgründen unpraktikabel erschien, wurde entschieden, keine Simulationen in kTHAM durchzuführen. Obwohl kTAM in Bezug auf Realitätsnähe kTHAM unterlegen ist, zeigt es sich bei der Simulationszeit großer Assemblies und Tilesets als überlegen, weshalb es als zentrales Simulationsmodell gewählt wurde.
+
+\begin{figure}
+    \centering 
+    \begin{tikzpicture}
+        \node at (-1,2.5) {a)};
+        \tileHOneMiniC{0}{2.5}
+        \node[scale=0.9] at (1.2,3.3) {$(0-3)$};
+        \tileHOneMiniB{1.2}{2.5}
+        \node[scale=0.9] at (2.4,3.3) {$(0-3)$};
+        \tileHOneMiniA{2.4}{2.5}
+        \tileHOneMiniSigma{3.6}{2.5}
+        \node at (1.8,3.8) {\texttt{H-1-mini}};
+        %
+        \node at (6,2.5) {b)};
+        \tileHOneKleinC{7}{2.5}
+        \node[scale=0.9] at (8.2,3.3) {$(0-9)$};
+        \tileHOneKleinB{8.2}{2.5}
+        \node[scale=0.9] at (9.4,3.3) {$(0-9)$};
+        \tileHOneKleinA{9.4}{2.5}
+        \tileHOneKleinSigma{10.6}{2.5}
+        \node at (8.8,3.8) {\texttt{H-1-klein}};
+        %
+        \node at (-1,0) {c)};
+        \tileHOneNormD{0}{0}
+        \node[scale=0.9] at (1.2,0.8) {$(0-9)$};
+        \tileHOneNormC{1.2}{0}
+        \node[scale=0.9] at (2.4,0.8) {$(0-9)$};
+        \tileHOneNormB{2.4}{0}
+        \node[scale=0.9] at (3.6,0.8) {$(0-9)$};
+        \tileHOneNormA{3.6}{0}
+        \tileHOneNormSigma{4.8}{0}
+        \node at (2.4,1.3) {\texttt{H-1-norm}};
+        %
+        \node at (6,0) {d)};
+        \tileHOneGrossD{7}{0}
+        \node[scale=0.9] at (8.2,0.8) {$(0-\text{L})$};
+        \tileHOneGrossC{8.2}{0}
+        \node[scale=0.9] at (9.4,0.8) {$(0-\text{L})$};
+        \tileHOneGrossB{9.4}{0}
+        \node[scale=0.9] at (10.6,0.8) {$(0-\text{L})$};
+        \tileHOneGrossA{10.6}{0}
+        \tileHOneGrossSigma{11.8}{0}
+        \node at (9.4,1.3) {\texttt{H-1-groß}};
+        %
+        \node at (-1,-3.1) {e)};
+        \tileHTwoKleinZ{0}{-2.5}
+        \tileHTwoKleinB{0}{-3.7}
+        \tileHTwoKleinY{1.2}{-2.5}
+        \tileHTwoKleinA{1.2}{-3.7}
+        \tileHTwoKleinX{2.4}{-2.5}
+        \tileHTwoKleinSigma{2.4}{-3.7}
+        \node at (1.2,-1.7) {\texttt{H-2-klein}};
+        %
+        \node at (6,-3.1) {f)};
+        \tileHTwoNormD{7}{-2.5}
+        \tileHTwoNormW{7}{-3.7}
+        \node[scale=0.9] at (8.2,-1.7) {$(\text{a}-\text{c})$};
+        \tileHTwoNormZ{8.2}{-2.5}
+        \node[scale=0.9] at (8.2,-4.5) {$(\text{a}-\text{c})$};
+        \tileHTwoNormV{8.2}{-3.7}
+        \node[scale=0.9] at (9.4,-1.7) {$(\text{a}-\text{c})$};
+        \tileHTwoNormY{9.4}{-2.5}
+        \node[scale=0.9] at (9.4,-4.5) {$(\text{a}-\text{c})$};
+        \tileHTwoNormU{9.4}{-3.7}
+        \node[scale=0.9] at (10.6,-1.7) {$(\text{a}-\text{c})$};
+        \tileHTwoNormX{10.6}{-2.5}
+        \node[scale=0.9] at (10.6,-4.5) {$(\text{a}-\text{c})$};
+        \tileHTwoNormT{10.6}{-3.7}
+        \tileHTwoNormSigma{11.8}{-2.5}
+        \tileHTwoNormS{11.8}{-3.7}
+        \node at (9.4,-1.2) {\texttt{H-2-norm}};
+        %
+        \node at (-1,-7.7) {g)};
+        \tileHThreeKleinZ{0}{-6.5}
+        \tileHThreeKleinQ{0}{-7.7}
+        \tileHThreeKleinC{0}{-8.9}
+        \tileHThreeKleinY{1.2}{-6.5}
+        \tileHThreeKleinP{1.2}{-7.7}
+        \tileHThreeKleinB{1.2}{-8.9}
+        \tileHThreeKleinX{2.4}{-6.5}
+        \tileHThreeKleinSigma{2.4}{-7.7}
+        \tileHThreeKleinA{2.4}{-8.9}
+        \node at (1.2,-5.7) {\texttt{H-3-klein}};
+        %
+        \node at (6,-7.7) {h)};
+        \tileHThreeNormE{7}{-6.5}
+        \tileHThreeNormX{7}{-7.7}
+        \tileHThreeNormW{7}{-8.9}
+        \node[scale=0.9] at (8.2,-5.7) {$(\text{o},\text{i})$};
+        \tileHThreeNormD{8.2}{-6.5}
+        \tileHThreeNormO{8.2}{-7.7}
+        \node[scale=0.9] at (8.2,-9.7) {$(\text{o},\text{i})$};
+        \tileHThreeNormV{8.2}{-8.9}
+        \node[scale=0.9] at (9.4,-5.7) {$(0,1)$};
+        \tileHThreeNormC{9.4}{-6.5}
+        \tileHThreeNormOne{9.4}{-7.7}
+        \node[scale=0.9] at (9.4,-9.7) {$(0,1)$};
+        \tileHThreeNormU{9.4}{-8.9}
+        \node[scale=0.9] at (10.6,-5.7) {$(0,1)$};
+        \tileHThreeNormB{10.6}{-6.5}
+        \tileHThreeNormZero{10.6}{-7.7}
+        \node[scale=0.9] at (10.6,-9.7) {$(0,1)$};
+        \tileHThreeNormT{10.6}{-8.9}
+        \tileHThreeNormA{11.8}{-6.5}
+        \tileHThreeNormSigma{11.8}{-7.7}
+        \tileHThreeNormS{11.8}{-8.9}
+        \node at (9.4,-5.2) {\texttt{H-3-norm}};
+    \end{tikzpicture}
+    \caption[Grafische Darstellung der Assemblies für die Evaluation]{Grafische Darstellung der Assemblies, die für die Simulationen ausgewählt wurden. In a), b), c) und d) sind die Assemblies der Tilesets abgebildet, die durch das Skript generiert wurden. Über den Assemblies sind die Namen sowie die möglichen Wertebereiche der darunterliegenden Tiles angegeben. Am Beispiel von a) gibt es im Tileset jeweils vier Tiles mit den Bezeichnern 0,1,2 und 3. Damit können 16 Werte abgebildet werden, unter denen sich die zehn benötigten Nachrichten befinden. Neben den vier generierten Tilesets wurden zwei Beispiele für die Molekülhöhe zwei erstellt: ein Minimalbeispiel in e) und ein Beispiel mit Variation in f). Das Gleiche für Moleküle der Höhe drei in g) und h). In h) umfasst das Tileset zusätzlich zu den unten und oben angegebenen Variationen noch entsprechende Tiles für die Mitte. Diese wurden aus Platzgründen nicht angegeben, umfassen aber fünf weitere Tiles für alle Fälle der inneren Kleber.}
+    \label{fig:sim_assemblies}
+\end{figure}
+
+Alle erstellten Tilesets werden mit einer Temperatur von zwei definiert. Eine Variation der Temperaturen in den Simulationen ist aus folgendem Grund nicht sinnvoll: Die Temperatur spielt in allen Assembly-Modellen eine zentrale Rolle, und in NetTAS ist dies nicht anders. Wenn die Simulation mit einer anderen als der vorgesehenen Temperatur durchgeführt wird, resultiert dies in fehlerhaften Bindungen der Tiles. 
+
+Zwei Self-Assemblies können trotz unterschiedlicher Temperatur identisch strukturiert sein, wobei nur die Kleber entsprechend angepasst werden müssen. In \texttt{kTAM} wird die Temperatur jedoch nicht direkt angegeben, sondern durch \emph{Binding Cost} und \emph{Bond Breaking Cost} repräsentiert. Das führt dazu, dass für unterschiedliche Tilesets unterschiedliche Parameter in \texttt{kTAM} angegeben werden müssen, wenn sich die Temperaturen unterscheiden.
+
+Dadurch entsteht eine potenzielle Fehlerquelle, die durch eine einheitliche Temperatur über alle Tilesets verhindert wird. Dementsprechend wird in der Simulation und Analyse der Ergebnisse immer eine Temperatur von zwei verwendet, um alle Messungen miteinander vergleichen zu können und mögliche Fehlerquellen auszuschließen.
+
+\section{Evaluation der Adressierung in DNA-Tile-basierten Tile-Assemblies}
+
+Die Simulation von Adressierung ist in NetTAS nicht möglich. Dies liegt daran, dass die Adressierung in dieser Implementierung im Kleberbezeichner definiert ist und die konkreten Basenpaare im offenen DNA-Strang des Tiles nicht im mathematischen Modell berücksichtigt werden. Eine Möglichkeit zur Evaluierung von mehreren Adressen besteht darin, mehrere Liganden zu erstellen. Dabei muss beachtet werden, dass dies eher die Varianz im Tileset simuliert als die eigentliche Adressierung. Für eine umfassendere Simulation der Adressen wäre ein Modell interessant, das den Einfluss von offenen DNA-Strängen unterschiedlicher Länge und Codierung testet.
+
+Zur Evaluation von Adressierung kann hier also festgestellt werden, dass die Implementierung trivial ist, da sie in der Bildung von Liganden inhärent ist. Auch kann eine große Menge von verschiedenen Adressen dazu führen, dass viele Liganden für das gleiche Tileset benötigt werden. Dadurch wären Mechanismen notwendig, die die richtigen Liganden abhängig von der Empfängeradresse im Medium freilassen. Dieser Vorgang kann jedoch nicht in NetTAS simuliert werden. Deshalb werden im Folgenden die Mechanismen betrachtet, welche durch Simulationsergebnisse in NetTAS evaluiert werden können.
+
+\section{Simulation und Evaluation von Acknowledgements}
+\label{sec:eval_ack}
+
+In dieser Sektion wird ein Mechanismus der Datenflusskontrolle evaluiert. Dafür wird zunächst betrachtet, wie aufwendig verschieden große Acknowledgements in \texttt{kTAM} sind. 
+
+\begin{figure}
+    \centering 
+    \begin{tikzpicture}
+        \node at (0,-2.2) {\texttt{Ack-1}};
+        \tileAckOneSigma{0}{0}
+        %
+        %
+        %
+        \node at (2.6,-2.2) {\texttt{Ack-2}};
+        \tileAckTwoSigma{3.2}{0.6}
+        \tileAckTwoX{3.2}{-0.6}
+        \tileAckTwoY{2}{-0.6}
+        \tileAckTwoA{2}{0.6}
+        %
+        %
+        %
+        \node at (6.4,-2.2) {\texttt{Ack-3}};
+        \tileAckThreeM{7.6}{1.2}
+        \tileAckThreeSigma{7.6}{0}
+        \tileAckThreeX{7.6}{-1.2}
+        %
+        \tileAckThreeN{6.4}{1.2}
+        \tileAckThreeAck{6.4}{0}
+        \tileAckThreeY{6.4}{-1.2}
+        %
+        \tileAckThreeO{5.2}{1.2}
+        \tileAckThreeB{5.2}{0}
+        \tileAckThreeZ{5.2}{-1.2}
+    \end{tikzpicture}
+    \caption[Acknowledgement Assemblies]{Darstellung der drei simulierten und analysierten Acknowledgement Self-Assemblies mit den Bezeichnern unter den Self-Assemblies, mit welchen sie in dieser Arbeit angesprochen werden.}
+    \label{fig:ack_assemblies}
+\end{figure}
+
+Simuliert werden drei unterschiedliche Möglichkeiten für Acknowledgements. Diese sind in Abbildung~\ref{fig:ack_assemblies} dargestellt. Im Folgenden werden sie auch mit den in der Abbildung gegebenen Namen angesprochen. Bei der Simulation der \texttt{Ack-1} Assembly kann zu allen Simulationsmodellen in NetTAS gesagt werden, dass die Simulationen trivial sind. Da das Tileset und die Assembly nur aus der Seed-Assembly besteht, kann auch keine Self-Assembly im herkömmlichen Sinne simuliert werden. Das Problem mit diesem Tile ist auch, so wie bei allen Assemblies der Höhe eins, dass sich das Tile als Ligand an Rezeptoren binden kann, ohne den Prozess der Self-Assembly durchlaufen zu haben. Wenn das kein Problem im System darstellt, so ist Ack-1 die effizienteste Möglichkeit zur Implementierung von Acknowledgements. 
+
+In dieser Sektion werden jedoch noch zwei weitere Möglichkeiten simuliert und analysiert. Beide Tilesets benötigen für die korrekte Bindung der Tiles die Temperatur zwei. Obwohl die \texttt{Ack-2} Self-Assembly mit vier Tiles komplexer ist als \texttt{Ack-1}, bleibt ihr Aufbau dennoch relativ einfach. Ein besonderes Merkmal dieses Moleküls ist, dass durch eine fehlerhafte Bindung des A- und Y-Tiles (siehe Abbildung~\ref{fig:ack_assemblies}) eine Bindung an den Rezeptoren eines Empfängergeräts möglich ist, ohne dass die Seed-Assembly gebunden werden muss.
+
+Dementsprechend gibt es mit \texttt{Ack-3} einen Vorschlag für eine Self-Assembly, bei welcher sich die Liganden nur durch zwei gleichzeitig fehlerhafte Bindungen an Rezeptoren binden können. Sonst muss das gesamte Molekül gebildet werden, damit es sich binden kann. Eine andere Möglichkeit wäre Snaked-Proofreading auf den Acknowledgements anzuwenden, um dieses Problem zu erschweren. Dazu wird jedoch in späteren Sektionen mehr beschrieben.
+
+\begin{figure}
+    \centering 
+    \begin{tikzpicture}[scale=0.8]
+        \begin{axis}[
+            ymin=1, ymax=1500,
+            boxplot/draw direction=y,
+            ylabel={kTAM Schritte},
+            xlabel={},
+            xmajorgrids=true,
+            xtick={1,2,3},
+            xticklabels={Ack-1,Ack-2,Ack-3},
+            xticklabel style={align=center, font=\small},
+            xtick align=inside,
+            xticklabel pos=right
+        ]
+        \addplot+[
+            draw = uzl_oceangreen,
+            boxplot prepared={
+                lower whisker=1,
+                lower quartile=1,
+                median=1,
+                upper quartile=1,
+                upper whisker=1
+            }
+        ] coordinates {};
+
+        \addplot+[
+            draw = uzl_red_2,
+            boxplot prepared={
+                lower whisker=32,
+                lower quartile=78,
+                median=95,
+                upper quartile=128,
+                upper whisker=166
+            }
+        ] coordinates {};
+        
+        \addplot+[
+            boxplot prepared={
+                lower whisker=393,
+                lower quartile=533,
+                median=641,
+                upper quartile=959,
+                upper whisker=1347
+            }
+        ] coordinates {};
+    
+        \end{axis}
+    \end{tikzpicture}
+    \caption[Simulationsergebnisse für Acknowledgement Assemblies]{Grafische Darstellung der Simulationsergebnisse für Acknowledgement Assemblies. Da Ack-1 nur aus einem Tile besteht, ist der Boxplot nur angedeutet dargestellt. Alle Durchläufe werden theoretisch bei null Schritten beendet, da keine Verbindung benötigt wird. Es kann jedoch ein klarer Unterschied zwischen Ack-2 und Ack-3 erkannt werden.}
+    \label{fig:ack_simulationen}
+\end{figure}
+
+Die Simulation der Acknowledgement Assemblies zeigt, dass \texttt{Ack-3} im Median fast siebenmal so viele Schritte in kTAM benötigt wie \texttt{Ack-2}. Dies ist in Abbildung~\ref{fig:ack_simulationen} dargestellt. Auch Minima, Quartile und Maxima sind eindeutig kleiner in der \texttt{Ack-2} Simulation. Die Gründe für \texttt{Ack-3} statt \texttt{Ack-2} wurden beschrieben. Hat die mögliche Fehlbildung in Ack-2 eine geringere Priorität, bietet es sich wegen der Komplexität an, dieses Molekül oder sogar Ack-1 zu verwenden. Ist die korrekte Bindung jedoch von hoher Relevanz, so kann zu \texttt{Ack-3} gesagt werden, dass ein Median von 641 Schritten in kTAM eine immer noch sehr schnelle Simulationszeit darstellt.
+Eine weitere Möglichkeit ist das \texttt{Ack-1}, \texttt{Ack-2} oder \texttt{Ack-3} Molekül mit Snaked-Proofreading zu erweitern, um fehlerhafte Bindungen weiter zu erschweren. Das wird in der Sektion~\ref{sec:eval_proof_ack} später in diesem Kapitel aufgegriffen und betrachtet.
+
+\section{Simulation und Evaluation von Prioritätsleveln}
+
+Zu Datenflusskontrolle und speziell zur Gerechtigkeit im System gehören die Prioritätslevel. Auch diese können mit der Laufzeit der Self-Assembly in verschiedenen Tilesets simuliert werden. Die Ergebnisse sind in Abbildung~\ref{fig:prio_simulationen} angegeben. Jedes in Tabelle~\ref{tab:eval_gen_tilesets} und Tabelle~\ref{tab:eval_build_tilesets} dargestellte Tileset wird dabei mit drei unterschiedlichen Prioritätsleveln erweitert und verglichen. Sie wurde wie folgt gewählt: ein Minimalbeispiel mit zwei Leveln, ein größeres aber noch realistisches Beispiel mit acht Prioritätsleveln und ein Maximalbeispiel mit 20 Leveln. Ein einzelnes Prioritätslevel als Minimalbeispiel widerspricht dem Sinn des Mechanismus, weshalb zwei Level das Minimalbeispiel darstellen. Mehr Level als 20 Prioritätslevel werden für ein Maximalbeispiel nicht angenommen. Ein höherer Wert kann implementiert werden, aber 20 Prioritätslevel werden in den meisten Anwendungsfällen nicht benötigt und können so als Maximalbeispiel verwendet werden.
+
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=3500,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=44,
+                    lower quartile=70,
+                    median=136,
+                    upper quartile=232,
+                    upper whisker=772
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=99,
+                    lower quartile=175,
+                    median=224,
+                    upper quartile=341,
+                    upper whisker=1057
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=105,
+                    lower quartile=277,
+                    median=408,
+                    upper quartile=673,
+                    upper whisker=1035
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=169,
+                    lower quartile=379,
+                    median=660,
+                    upper quartile=1559,
+                    upper whisker=3061
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-mini}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=3500,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=52,
+                    lower quartile=130,
+                    median=282,
+                    upper quartile=690,
+                    upper whisker=1420
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=121,
+                    lower quartile=261,
+                    median=516,
+                    upper quartile=759,
+                    upper whisker=1575
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=113,
+                    lower quartile=305,
+                    median=501,
+                    upper quartile=1137,
+                    upper whisker=3223
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=85,
+                    lower quartile=367,
+                    median=540,
+                    upper quartile=1061,
+                    upper whisker=3001
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=9999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=119,
+                    lower quartile=249,
+                    median=357,
+                    upper quartile=1009,
+                    upper whisker=4453
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=114,
+                    lower quartile=514,
+                    median=717,
+                    upper quartile=1326,
+                    upper whisker=3400
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=138,
+                    lower quartile=642,
+                    median=1280,
+                    upper quartile=1878,
+                    upper whisker=4750
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=164,
+                    lower quartile=584,
+                    median=1139,
+                    upper quartile=1594,
+                    upper whisker=6396
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=9999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=117,
+                    lower quartile=409,
+                    median=829,
+                    upper quartile=1763,
+                    upper whisker=5855
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=542,
+                    lower quartile=924,
+                    median=1525,
+                    upper quartile=2448,
+                    upper whisker=6164
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=598,
+                    lower quartile=1048,
+                    median=1206,
+                    upper quartile=2840,
+                    upper whisker=4148
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=304,
+                    lower quartile=674,
+                    median=1206,
+                    upper quartile=2380,
+                    upper whisker=7716
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-groß}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=98,
+                    lower quartile=188,
+                    median=258,
+                    upper quartile=346,
+                    upper whisker=730
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=442,
+                    lower quartile=682,
+                    median=821,
+                    upper quartile=1090,
+                    upper whisker=2030
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=912,
+                    lower quartile=1268,
+                    median=1691,
+                    upper quartile=2172,
+                    upper whisker=3552
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=1690,
+                    lower quartile=3254,
+                    median=4715,
+                    upper quartile=6564,
+                    upper whisker=12328
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=686,
+                    lower quartile=1804,
+                    median=2228,
+                    upper quartile=2840,
+                    upper whisker=4872
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1766,
+                    lower quartile=3796,
+                    median=4706,
+                    upper quartile=5342,
+                    upper whisker=6976
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=3776,
+                    lower quartile=5106,
+                    median=6172,
+                    upper quartile=8010,
+                    upper whisker=12224
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=5114,
+                    lower quartile=6830,
+                    median=9171,
+                    upper quartile=13994,
+                    upper whisker=27694
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=40000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=295,
+                    lower quartile=605,
+                    median=836,
+                    upper quartile=1091,
+                    upper whisker=3071
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1016,
+                    lower quartile=1670,
+                    median=2091,
+                    upper quartile=2526,
+                    upper whisker=3644
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=1604,
+                    lower quartile=2900,
+                    median=4020,
+                    upper quartile=4730,
+                    upper whisker=7364
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=3024,
+                    lower quartile=5956,
+                    median=8561,
+                    upper quartile=12422,
+                    upper whisker=15224
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=40000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=873,
+                    lower quartile=2985,
+                    median=3791,
+                    upper quartile=4899,
+                    upper whisker=10501
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=3392,
+                    lower quartile=5014,
+                    median=6169,
+                    upper quartile=7464,
+                    upper whisker=10386
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=4704,
+                    lower quartile=7822,
+                    median=10208,
+                    upper quartile=12022,
+                    upper whisker=21616
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=6804,
+                    lower quartile=13802,
+                    median=16825,
+                    upper quartile=20728,
+                    upper whisker=34866
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm}}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Prioritätsassemblies]{Darstellung der Simulationsergebnisse von Assemblies mit unterschiedlichen Prioritätsleveln. Jedes Tileset wurde dabei mit keinen, zwei, acht und 20 Prioritätsleveln simuliert.}
+    \label{fig:prio_simulationen}
+\end{figure}
+
+Die Simulationsergebnisse aus Abbildung~\ref{fig:prio_simulationen} zeigen, dass Prioritätslevel in kleineren Assemblies geringen Mehraufwand verursachen. In (a),(b),(c) und (d) lässt sich aus dem Median ablesen, dass sich die Schritte in kTAM zwischen unterschiedlichen Prioritätsleveln nur gering verändern. Die Ausreißer und Quartile zeigen, dass das Tileset größer ist, jedoch bleibt bei den Prioritätstiles die Assembly konstant in ihrer Größe. Bei Assemblies mit einer Höhe von zwei, wie in (e) und (f), oder einer Höhe von drei, wie in (g) und (h), präsentiert sich die Situation anders. Die Assembly wächst je nach Höhe an, was einen größeren Einfluss auf die Laufzeit der Self-Assembly hat als die Größe des Tilesets. Die Simulationsergebnisse zeigen auch, dass für Assemblies der Höhe eins das Prioritätslevel nur einen geringen Einfluss auf die Laufzeit hat. Assemblies und Molekülen der Höhe zwei und drei können niedrige Prioritätslevel noch mit geringem Mehraufwand implementiert werden, bei höheren Leveln wird jedoch das Tileset weit aufgebläht, was zu größeren Ausreißern in allen Messungen führt. 
+
+Es kann jedoch in sowohl (c) als auch (d) erkannt werden, dass die Simulationen mit 20 Prioritätsleveln in Quartilen und im Median schneller als mit acht Prioritätleveln konstruiert werden. Eine mögliche Erklärung dafür könnte sein, dass das originale Tileset bereits groß ist. Die Tilesets sind mit den Größen 32 für \texttt{H-1-norm} und 68 für \texttt{H-1-groß} relativ groß. Durch acht Prioritätstiles wird diese Menge auf 40 und 76 erhöht, mit 20 Prioritätstiles auf 52 und 88. Aus allen Simulationen kann gefolgert werden, dass die Assemblygröße ein bedeutenderer Faktor für die Laufzeit ist als die Tilesetgröße. Ein größeres Tileset führt in kTAM zu mehr Ausreißern und größerer Differenz zwischen den Simulationen. Damit kann erklärt werden, warum in Abbildung~\ref{fig:prio_simulationen} (c) und (d) die Quartile und der Median für 20 Prioritätslevel jeweils niedriger ist als für acht Prioritätslevel, während die Maxima deutlich größer sind. 
+
+Allgemein lässt sich zum Mechanismus der Prioritätstiles sagen, dass eine geringe Anzahl an Prioritätslevel einen geringen Einfluss auf Assembly und Tileset haben. Je größer die Self-Assemblies in ihrer Höhe sind und je mehr Prioritätslevel benötigt werden, desto mehr schlägt sich dieser Mechanismus auf die Laufzeit aus. Für $p$ Prioritätslevel und Assemblyhöhe $h$ wird hier das Tileset um $ph$ und die Assembly um $h$ Tiles erweitert. Dadurch werden vor allem die Ausreißer in den Simulationen größer, da die Assemblygröße konstant bleibt, die Tilesetgröße jedoch abhängig vom Prioritätslevel wächst.
+
+Damit sind beide Mechanismen der Datenflusskontrolle evaluiert und vorgestellt. Sowohl Acknowledgements als auch Prioritätslevel lassen sich durch DNA-basierte Self-Assembly realisieren. Beide Mechanismen zeigen in den Simulationen, dass sie ohne großen Mehraufwand implementiert werden können. Es kann so mit der Evaluation der Flags weitergemacht werden.
+
+\section{Simulation und Evaluation von Flags}
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=20000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=44,
+                    lower quartile=70,
+                    median=136,
+                    upper quartile=232,
+                    upper whisker=772
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=69,
+                    lower quartile=235,
+                    median=351,
+                    upper quartile=583,
+                    upper whisker=973
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=247,
+                    lower quartile=621,
+                    median=837,
+                    upper quartile=1111,
+                    upper whisker=2159
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=3056,
+                    lower quartile=4412,
+                    median=6039,
+                    upper quartile=8388,
+                    upper whisker=9826
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-mini}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=20000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=52,
+                    lower quartile=130,
+                    median=282,
+                    upper quartile=690,
+                    upper whisker=1420
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=55,
+                    lower quartile=287,
+                    median=492,
+                    upper quartile=861,
+                    upper whisker=1367
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=471,
+                    lower quartile=739,
+                    median=1019,
+                    upper quartile=1529,
+                    upper whisker=3989
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=2272,
+                    lower quartile=5622,
+                    median=8542,
+                    upper quartile=10910,
+                    upper whisker=16012
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=119,
+                    lower quartile=249,
+                    median=357,
+                    upper quartile=1009,
+                    upper whisker=4453
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=174,
+                    lower quartile=924,
+                    median=1257,
+                    upper quartile=1560,
+                    upper whisker=4498
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=800,
+                    lower quartile=1072,
+                    median=1385,
+                    upper quartile=2832,
+                    upper whisker=8170
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=6245,
+                    lower quartile=8433,
+                    median=10978,
+                    upper quartile=13905,
+                    upper whisker=19795
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=117,
+                    lower quartile=409,
+                    median=829,
+                    upper quartile=1763,
+                    upper whisker=5855
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=248,
+                    lower quartile=908,
+                    median=1830,
+                    upper quartile=2616,
+                    upper whisker=6664
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=1176,
+                    lower quartile=1796,
+                    median=3092,
+                    upper quartile=4640,
+                    upper whisker=13668
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=10759,
+                    lower quartile=12607,
+                    median=17217,
+                    upper quartile=22239,
+                    upper whisker=29211
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-groß}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=98,
+                    lower quartile=188,
+                    median=258,
+                    upper quartile=346,
+                    upper whisker=730
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=222,
+                    lower quartile=444,
+                    median=690,
+                    upper quartile=956,
+                    upper whisker=1374
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=844,
+                    lower quartile=1658,
+                    median=2054,
+                    upper quartile=2512,
+                    upper whisker=3516
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=9942,
+                    lower quartile=16110,
+                    median=20740,
+                    upper quartile=25248,
+                    upper whisker=28674
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=70000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=686,
+                    lower quartile=1804,
+                    median=2228,
+                    upper quartile=2840,
+                    upper whisker=4872
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1996,
+                    lower quartile=2902,
+                    median=4008,
+                    upper quartile=5082,
+                    upper whisker=12440
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=3592,
+                    lower quartile=6190,
+                    median=7569,
+                    upper quartile=9032,
+                    upper whisker=11514
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=23598,
+                    lower quartile=30260,
+                    median=35286,
+                    upper quartile=40334,
+                    upper whisker=67784
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=70000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=295,
+                    lower quartile=605,
+                    median=836,
+                    upper quartile=1091,
+                    upper whisker=3071
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=918,
+                    lower quartile=1362,
+                    median=1603,
+                    upper quartile=2050,
+                    upper whisker=3154
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=2164,
+                    lower quartile=5076,
+                    median=5869,
+                    upper quartile=8126,
+                    upper whisker=13334
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=21703,
+                    lower quartile=25895,
+                    median=32540,
+                    upper quartile=36540,
+                    upper whisker=68417
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=90000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={F0,F1,F3,F10},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+                 
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=873,
+                    lower quartile=2985,
+                    median=3791,
+                    upper quartile=4899,
+                    upper whisker=10501
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=3340,
+                    lower quartile=5218,
+                    median=6205,
+                    upper quartile=7298,
+                    upper whisker=13480
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=5316,
+                    lower quartile=8630,
+                    median=10333,
+                    upper quartile=14514,
+                    upper whisker=17560
+                }
+            ] coordinates {}; 
+    
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=18755,
+                    lower quartile=40717,
+                    median=48573,
+                    upper quartile=59367,
+                    upper whisker=82477
+                }
+            ] coordinates {};
+
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm}}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Flagassemblies]{Darstellung der Simulationsergebnisse von Assemblies mit unterschiedlichen Anzahlen von Flags in Boxplot Form. Jedes Tileset wurde dabei mit keiner, einer, drei und zehn Flags simuliert.}
+    \label{fig:flag_simulationen}
+\end{figure}
+
+So wie die Prioritätslevel wird in dieser Sektion der Mechanismus der Flags simuliert. Die Ergebnisse dafür sind in Abbildung~\ref{fig:flag_simulationen} zu sehen. Genau wie bei den Prioritätsleveln wurden für jedes Tileset die Minimalgröße von Flags mit einer Flag, eine realistische Flagmenge mit drei Flags und eine Maximalgröße mit zehn Flags simuliert. Mehr als zehn Flags können auch hier implementiert werden. Jedoch gibt es kaum Anwendungsfälle, in denen zehn oder mehr Flags benötigt werden. 
+
+Im Gegensatz zu den Simulationen der Prioritätslevel ist bei Flags der Unterschied zwischen diesen drei Flagmengen bedeutend größer. Während für eine oder drei Flags die Simulationen zwar merkbar mehr Schritte benötigen, sind die Unterschiede der Laufzeit relativ gering. Die Simulationen mit zehn Flags zeigen, dass viele Flags zu stark erhöhten Simulationsschritten führen. Das liegt daran, dass Flags im Gegensatz zu Prioritätsleveln nicht nur das Tileset, sondern auch noch zusätzlich die Größe der Assembly beeinflussen. Für $f$ Flags und Molekülhöhe $h$ wird das Tileset mit $f(h+1)$ Tiles und die Assemblygröße mit $fh$ Tiles erweitert. Somit wächst nicht nur die Tilesetgröße, sondern auch die Assemblygröße abhängig von der Menge an Flags. Wenn nur eine Flag verwendet wird, ist die Assemblygröße analog zu der Implementierung mit zwei Prioritätsleveln. Jedoch, mit einer steigenden Anzahl von Flags wächst die Größe der Assembly linear, während sie bei einem Anstieg der Prioritätslevel konstant bleibt.
+
+Die Simulationsergebnisse in Abbildung~\ref{fig:flag_simulationen} zeigen, dass die Implementierung von einer bis drei Flags zu einer erkennbaren Zunahme der Schritte in der Self-Assembly führt. Dennoch liegt die resultierende Erhöhung innerhalb eines akzeptablen und realisierbaren Rahmens. Bei einer größeren Menge von Flagtiles wird die Laufzeit in kTAM jedoch bedeutend größer. Dabei sollte beim kTAM Simulationsmodell beachtet werden, dass eine große Assembly die Schrittzahl erheblich beeinflusst. Die Simulation von so großen Tilesets war in 2HAM mit den für diese Arbeit vorhandene Rechenleistung nicht möglich, da die Simulationen zu lange gedauert hätten.
+
+\section{Simulation und Evaluation von Prüfsummen}
+
+In den folgenden zwei Sektionen wird die letzte betrachtete Anforderung analysiert: die Fehlerbehandlung. Begonnen wird mit der Implementierung von Prüfsummen und somit mit der Fehlererkennung. Bei Prüfsummen in Self-Assemblies ist zur Simulation Folgendes zu sagen: Die Self-Assembly wächst durch Prüfsummen nicht bedeutend an, da nur ein weiteres Tile am Ende des Moleküls hinzukommt. Die Größe des Tilesets vergrößert sich abhängig von der Anzahl der Nachrichten wiederum deutlich. 
+
+\begin{figure}
+    \centering 
+    \begin{tikzpicture}[scale=0.8]
+        \plottingChecksumGrowth
+        {10000}{1}{30000}
+        {10000}{1}{10}
+        {(1,4)(500,1082)(1000,2081)(1500,3613)(2000,4577)(2500,5699)(3000,6991)(3500,8465)(4000,8465)(4500,10133)(5000,12007)(5500,12007)(6000,13942)(6500,13942)(7000,16421)(7500,16421)(8000,16421)(8500,18985)(9000,18985)(9500,21111)(10000,21111)}
+        {(1,2)(10,3)(20,3)(40,4)(1200,4)(1300,5)(5000,5)(5800,5)(5900,6)(6500,6)(6600,5)(7000,5)(9000,5)(9200,5)(9300,6)(10000,6)}
+        \end{tikzpicture}
+    \caption[Wachstum des Tilesets in Prüfsummen-Assemblies]{Grafische Darstellung des Wachstums von Tilesetgröße und Assemblygröße im Verhältnis zur Nachrichtenmenge bei Prüfsummen. Dabei ist zu erkennen, dass die Assemblygröße schwankt, allgemein jedoch klein und fast konstant bleibt, während die Tilesetgröße linear steigt, mit einigen kleineren Plateaus.}
+    \label{fig:chksm_growth}
+\end{figure}
+
+
+Dies ist in Abbildung~\ref{fig:chksm_growth} verdeutlicht. In dem Graphen ist klar zu erkennen, dass das Tileset linear zur Nachrichtenmenge wächst. Die Assemblygröße steigt in den ersten 1.000 Nachrichten zwar an, jedoch bleibt die Größe danach zwischen fünf und sechs relativ konstant. Die Assemblygröße wächst jedoch nicht durch die implementierte Prüfsumme, sondern wegen der wachsenden Nachrichtenmenge. Prüfsummen vergrößern Assemblies der Höhe eins konstant um ein einzelnes Tile.
+Es ist bei dem Graphen anzumerken, dass eine konstante Gewichtung gewählt wurde, da die Assemblygröße und Tilesetgröße ungleich anwächst. 
+Bei einer Nachrichtenmenge von 10.000 ist das Tileset mit einer Größe von 21.111 im Vergleich zur Assembly mit Größe sechs derart größer, dass ein Verhältnis von mindestens \texttt{1:3519} benötigt wird, um eine Veränderung herbeizuführen.
+
+Mit diesen Voraussetzungen kann die Simulation und Analyse von Prüfsummen in Self-Assemblies durchgeführt werden. Dazu ist jedoch anzumerken, dass in einem realistischeren Modell nicht alle Tiles zur Self-Assembly verwendet werden. Nur Tiles, welche die korrekte Nachricht bilden, sollten auf diese Weise verwendet werden. Dabei wäre die Simulation in NetTAS jedoch trivial. Eine Self-Assembly der Höhe eins mit fünf Tiles bildet sich schnell und wäre identisch zu allen anderen Self-Assemblies dieser Größe. Deshalb wird in dieser Evaluation die Laufzeit der Self-Assembly mit allen Tiles verwendet, um einen einheitlichen Vergleich zwischen verschieden Tilesets zu haben. Somit kann ein Vergleich zwischen Prüfsummen-Assemblies für 100 Nachrichten mit Assemblies für 1000 Nachrichten verglichen werden. Diese haben gleich große Assemblies und wären somit in der Laufzeit im deterministischen Fall identisch. Die Simulationsergebnisse sind in Abbildung~\ref{fig:chksm_simulation} dargestellt.
+
+
+\begin{table}
+    \centering 
+    \begin{tabular}{lrr}
+        Tileset & Assemblygröße & Tilesetgröße \\\hline
+        \texttt{H-1-mini} & 4 & 10 \\
+        \texttt{H-1-mini} + chksm & 3 & 21 \\
+        \texttt{H-1-klein} & 4 & 22 \\
+        \texttt{H-1-klein} + chksm & 4 & 211 \\
+        \texttt{H-1-norm} & 5 & 32 \\
+        \texttt{H-1-norm} + chksm & 4 & 2.081 \\
+        \texttt{H-1-groß} & 5 & 68 \\
+        \texttt{H-1-groß} + chksm & 6 & 21.111 \\\hline
+    \end{tabular}
+    \caption[Tileset- und Assemblygrößen für die generierten Tilesets]{Darstellung von Tileset- und Assemblygrößen für die vier generierten Tilesets aus Tabelle~\ref{tab:eval_gen_tilesets} und ihre Prüfsummenäquivalenten.}
+    \label{tab:chksm_growth}
+\end{table}
+
+Alle bisherigen Simulationen nutzen die acht Tilesets aus Tabelle~\ref{tab:eval_gen_tilesets} und Tabelle~\ref{tab:eval_build_tilesets}. Bei den Prüfsummen werden jedoch nur die vier Tilesets aus Tabelle~\ref{tab:eval_gen_tilesets} herangezogen, da die Prüfsummenerstellung in Self-Assemblies im Skript lediglich für die generierten Tilesets der Höhe eins implementiert wurde. Obwohl das Prinzip für höhere Moleküle analog ist, und die Information jedes Tiles von dem Seed-Tile zum letzten Tile in jeder Reihe weitergegeben werden muss, genügt es für den Konzeptionsbeweis, den Mechanismus bei Molekülen der Höhe eins zu betrachten.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+            \begin{axis}[
+                ymin=1, ymax=1000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={\texttt{H-1-mini}, \texttt{H-1-mini} + chksm},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=6,
+                    lower quartile=92,
+                    median=123,
+                    upper quartile=196,
+                    upper whisker=562
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=19,
+                    lower quartile=97,
+                    median=285,
+                    upper quartile=397,
+                    upper whisker=917
+                }
+            ] coordinates {};
+        
+            \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+            \begin{axis}[
+                ymin=1, ymax=20000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={\texttt{H-1-klein}, \texttt{H-1-klein} + chksm},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=20,
+                    lower quartile=104,
+                    median=242,
+                    upper quartile=610,
+                    upper whisker=1666
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=202,
+                    lower quartile=1814,
+                    median=2914,
+                    upper quartile=5128,
+                    upper whisker=15592
+                }
+            ] coordinates {};
+        
+            \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+            \begin{axis}[
+                ymin=1, ymax=120000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={\texttt{H-1-norm}, \texttt{H-1-norm} + chksm},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=103,
+                    lower quartile=277,
+                    median=625,
+                    upper quartile=839,
+                    upper whisker=1303
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=2312,
+                    lower quartile=10528,
+                    median=29841,
+                    upper quartile=58918,
+                    upper whisker=106278
+                }
+            ] coordinates {};
+        
+            \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.8]
+            \begin{axis}[
+                ymin=1, ymax=510000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={\texttt{H-1-groß}, \texttt{H-1-groß} + chksm},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=81,
+                    lower quartile=575,
+                    median=1011,
+                    upper quartile=1405,
+                    upper whisker=6063
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=150000,
+                    lower quartile=150000,
+                    median=150000,
+                    upper quartile=150000,
+                    upper whisker=500000
+                }
+            ] coordinates {};
+
+            \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Prüfsummen in Assemblies]{Boxplots zur Darstellung der Messergebnisse von den Tilesets im Vergleich zu den Prüfsummenäquivalenten. Die zugehörigen Namen sind links und rechts über dem Graphen abgebildet und sind der Tabelle~\ref{tab:chksm_growth} entnommen. Bis auf \texttt{H-1-groß + chksm} wurde für jedes Tileset 30 Messungen durchgeführt, aus welchen in diesen Graphen Minimum, unteres Quartil, Median, oberes Quartil und Maximum abgebildet werden. Nur bei \texttt{H-1-groß + chksm} wurde auf die 30 Messungen verzichtet, da die Simulationen auf einem so großen Tileset zu lange gedauert hätten. Die dargestellten Werte sind aus insgesamt vier Messungen, die im Fließtext näher erläutert werden.}
+    \label{fig:chksm_simulation}
+\end{figure}
+
+Aus den Simulationergebnissen in Abbildung~\ref{fig:chksm_simulation} lässt sich Folgendes ablesen. Für den kleinsten Datensatz ist die Laufzeit für Prüfsummen in \emph{kTAM} noch relativ gering. Der Median des Tilesets ohne Prüfsumme liegt bei 123 Schritten in kTAM, während der Median mit Prüfsumme bei 285 Schritten liegt. Das untere Quartil ohne und mit Prüfsumme zeigt ebenfalls nur geringe Unterschiede mit 92 bzw. 97 Schritten. Ein etwas größerer Unterschied ist im oberen Quartil sichtbar, wo es ohne Prüfsumme 196 Schritte und mit Prüfsumme 397 Schritte sind, allerdings bleibt dieser Unterschied im Gesamtkontext noch relativ unbedeutend.
+
+Jedoch muss für das kleinste Tileset folgendes betrachtet werden. Die Assembly- und Tilesetgröße wird aus der Gewichtung gewonnen. Dadurch, dass die Gewichtung im \texttt{H-1-mini} Tileset \texttt{1:1} ist, wird die Assembly im Prüfsummenfall kleiner, da das Tileset sonst stark vergrößert wird. Die Assemblygröße mit Prüfsumme für zehn Nachrichten ist also drei. Das Tileset besteht dabei aus einem Seed-Tile, zehn verschiedenen Tiles für die verschiedenen Nachrichten (die sich neben dem Seed-Tile befinden) und den Prüfsummen-Tiles. Dabei sind die Prüfsummen-Tiles im Wesentlichen Kopien der mittleren zehn Tiles, mit dem Unterschied, dass sie sich nicht am Seed-Tile, sondern an den mittleren Tiles binden. Dieses Konzept kann auch auf Tilesets mit mehr Nachrichten ausgeweitet werden. Jedoch würde das den Sinn von Prüfsummen missinterpretieren, da so immer nur ein Tile mit identischem Prüfsummentile daneben erstellt werden würde. Die Größe des Tilesets für $x$ zu kodierenden Nachrichten wäre so immer $2x+1$. Um Prüfsummen besser testen zu können, wurde für die anderen Tilesets ausgeschlossen, eine Assemblygröße von drei zu verwenden, auch wenn dies bei der gewählten Gewichtung für besser erachtet wird. Somit erklären sich die Assembly- und Tilesetgrößen in Abbildung~\ref{fig:chksm_growth} und Tabelle~\ref{tab:chksm_growth}. Auch wenn durch die zuvor beschriebene Methode kleinere Assemblies und Tilesets möglich wären, widerspricht dies dennoch dem Prinzip der Prüfsummen.
+
+In den Boxplots der anderen drei Tilesets zeigt sich, wie lange die Simulation braucht, um die gleiche Assembly mit einer Prüfsumme zu erstellen. Der Boxplot des größten Tilesets sieht wie in der Abbildung dargestellt aus, da nur vier Messungen durchgeführt wurden, die alle abgebrochen wurden. Das liegt daran, dass selbst nach 150.000 Schritten in \texttt{kTAM} mit den gleichen Parametern (Bining Cost = 16 und Bond Breaking Cost = 11) die Assembly nur zwischen den Größen eins und zwei hin und her wechselt. Auch bei niedriger Binding Cost und vergleichsweise hoher Bond Breaking Cost zeigt die Simulation, dass das erste Tile neben dem Seed-Tile häufig bricht, bevor ein weiteres Tile sich binden kann. Obwohl die finale Assembly eine Größe von sechs aufweist, erreicht sie bis zum 150.000. Schritt nie eine Größe von mehr als zwei. Aufgrund der langen Dauer dieser Simulationen wurden sie in drei weiteren Durchläufen getestet. In keinem dieser Durchläufe zeigte sich eine Verbesserung gegenüber dem ersten Lauf.
+
+Zuletzt wurde ein Durchlauf mit Parametern gewählt, die bei einem Molekül der Höhe eins mit Temperatur zwei funktioniert, da es nur eine Bindungsmöglichkeit von rechts nach links gibt. Die gewählten Parameter Binding Cost = 11 und Bond Breaking Cost = 21 führen dazu, dass sich Verbindungen der Stärke zwei nicht mehr lösen können. Solche Parameter für ein Tileset der Stärke zwei entfernen einen der zentralen Aspekte des \texttt{kTAM}. Um das Problem der Simulation der Prüfsumme im größten Tileset zu lösen, können die Parameter trotzdem angepasst werden. Dieser Simulationsdurchlauf wurde nach 500.000 Schritten abgebrochen, da zwischen dem 40.000. Schritt und dem 500.000. Schritt die Assembly immer auf Größe fünf geblieben ist. Dies liegt daran, dass in \texttt{kTAM} zwölf offene Wachstumsmöglichkeiten bei einer Assembly der Höhe eins und Länge fünf existieren. Bei einem Tileset der Größe 21.111 führt dies dazu, dass statistisch 253.332 verschiedene zufällige Tileplatzierungen in \texttt{kTAM} möglich sind. Weitere Simulationsdurchläufe wurden aus zeittechnischen Gründen nicht durchgeführt.
+
+Abschließend zu den Prüfsummen in DNA-Tile-basierten Assemblies lässt sich Folgendes festhalten: Bei kleinen Assemblies, die eine geringe Anzahl an variablen Tiles enthalten, bieten Prüfsummen eine Möglichkeit, die korrekte Bildung nach der Seed-Assembly zu bestätigen. Allerdings wird hierbei nicht überprüft, ob das korrekte Tile am Seed-Tile gebunden wurde. Auch muss angemerkt werden, dass bei größeren Assemblies mit variablen Tiles die Anzahl der notwendigen Prüfsummentiles rapide ansteigt. Falls solch eine umfangreiche Tilemenge in einem konkreten Anwendungsfall vertretbar ist, könnte der Mechanismus dennoch implementiert werden. Dies begründet sich darin, dass die in Abbildung~\ref{fig:chksm_simulation} dargestellten Simulationen nicht die Laufzeit eines einzelnen Prüfsummenmoleküls, sondern das gesamte Tileset berücksichtigen. Insgesamt erscheint dieser Fehlerbehandlungsmechanismus aufgrund der hohen Anzahl an Tiles jedoch nur für geringe Nachrichtenmengen praktikabel.
+
+\section{Simulation und Evaluation von Snaked-Proofreading }
+
+Der andere vorgestellte Mechanismus zur Fehlerbehandlung ist das Snaked-Proofreading, die Fehlerkorrektur. Im Vergleich zu den vorherigen Betrachtungen, die sich gegenseitig nicht beeinflussen und dementsprechend getrennt voneinander betrachtet werden können, muss beim Snaked-Proofreading betrachtet werden, wie sich die Simulationszeit im Zusammenhang zu allen vorherigen Mechanismen verhält. Deshalb wird das Snaked-Proofreading als Letztes in diesem Kapitel analysiert. 
+
+\subsection{Snaked-Proofreading für das H-3-norm Tileset}
+\label{sec:snaked_proof_tiles}
+
+An dieser Stelle ist anzumerken, dass in den vorherigen Simulationen einige Fehlkonstruktionen entstanden sind. In den Simulationen des Tilesets \texttt{H-3-norm} entstand jeweils einmal eine fehlerhafte Konstruktion, sowohl in der Simulation mit drei Flags als auch in der mit zehn Flags. Eine Fehlerquote von zwei aus 120 Läufen ist hoch genug, um über Fehlerkorrektur für diese Assemblies nachzudenken. Der Fehler ist in Abbildung~\ref{fig:H3errors} dargestellt und ist unabhängig zu den Flagtiles. In a) ist die Assembly, wie vorhergesehen konstruiert. Bindet sich das Tile mit dem Bezeichner \glqq 1\grqq, so gibt es in dem Durchlauf kein Problem. Dies ist durch die Farbe Grün im Übergang und in d) dargestellt. 
+
+
+\begin{figure}
+    \centering 
+    \begin{tikzpicture}[scale=0.95]
+        %\node[scale=1.5] at (0,3) {A};
+        \node at (-1.2,1.2) {a)};
+        %
+        \tileHThreeNormU{-1.2}{-1.2}
+        %
+        \tileHThreeNormB{0}{1.2}
+        \tileHThreeNormT{0}{-1.2}
+        %
+        \tileHThreeNormA{1.2}{1.2}
+        \tileHThreeNormSigma{1.2}{0}
+        \tileHThreeNormS{1.2}{-1.2}
+        %
+        \draw[green, thick] (0,0) circle (2.5cm);
+        \draw[orange, thick, ->] (0,2.5) to[bend left] (2.7,3.6);
+        \node[scale=1.5] at (0.3,4.3) {$+$};
+        \tileHThreeNormBAlt{1.35}{4.3}
+        %
+        \draw[green, thick, ->] (1.8,-1.75) to (2.9,-2.6);
+        \node[scale=1.5] at (1,-3) {$+$};
+        \tileHThreeNormOne{2}{-3}
+        % 
+        % 
+        %
+        %\node[scale=1.5] at (5.2,6.6) {B};
+        \node at (4,4.8) {b)};
+        \tileHThreeNormU{4}{2.4}
+        %
+        \tileHThreeNormBAlt{5.2}{4.8}
+        \tileHThreeNormBAlt{5.2}{3.6}
+        \tileHThreeNormT{5.2}{2.4}
+        %
+        \tileHThreeNormA{6.4}{4.8}
+        \tileHThreeNormSigma{6.4}{3.6}
+        \tileHThreeNormS{6.4}{2.4}
+        %
+        \draw[orange, thick] (5.2,3.6) circle (2.5cm);
+        %
+        \draw[red, thick, ->] (6.4,5.8) to[bend left] (9.2,5.8);
+        \node[scale=1.5] at (6.8,7) {$+$};
+        \tileHThreeNormC{7.8}{7}
+        %
+        \draw[green, thick, ->] (5.2,1.1) to[bend left] (2.5,0);
+        \node[scale=1.5] at (4.3,0) {$-$};
+        \tileHThreeNormBAlt{5.3}{0}
+        %
+        \draw[green, thick] (5.2,3) circle (0.2cm);
+        %
+        %
+        %
+        %\node[scale=1.5] at (5.2,-0.6) {C};
+        \node at (4,-2.4) {d)};
+        \tileHThreeNormU{4}{-4.8}
+        %
+        \tileHThreeNormBAlt{5.2}{-2.4}
+        \tileHThreeNormOne{5.2}{-3.6}
+        \tileHThreeNormT{5.2}{-4.8}
+        %
+        \tileHThreeNormA{6.4}{-2.4}
+        \tileHThreeNormSigma{6.4}{-3.6}
+        \tileHThreeNormS{6.4}{-4.8}
+        %
+        \draw[green, thick] (5.2,-3.6) circle (2.5cm);
+        %
+        \draw[green, thick, ->] (7.7,-3.6) to (8.8,-3.6);
+        %
+        \draw[green, thick] (5.2,-3) circle (0.2cm);
+        \draw[green, thick] (5.2,-4.2) circle (0.2cm);
+        %
+        \node at (9.2,-3.6) {$\cdots$};
+        %
+        %
+        %
+        %\node[scale=1.5] at (10.4,6.6) {D};
+        \node at (9.2,4.8) {c)};
+        \tileHThreeNormC{9.2}{3.6}
+        \tileHThreeNormU{9.2}{2.4}
+        %
+        \tileHThreeNormBAlt{10.4}{4.8}
+        \tileHThreeNormBAlt{10.4}{3.6}
+        \tileHThreeNormT{10.4}{2.4}
+        %
+        \tileHThreeNormA{11.6}{4.8}
+        \tileHThreeNormSigma{11.6}{3.6}
+        \tileHThreeNormS{11.6}{2.4}
+        %
+        \draw[red, thick] (10.4,3.6) circle (2.5cm);
+        %
+        \draw[dashed, thick, ->] (9.2,1.4) to[bend left] (6.4,1.4);
+        \draw[red, line width=.2ex] (7.6,0.8) -- (8,1.2) (7.6,1.2) -- (8,0.8);
+        %
+        \draw[green, thick] (10.4,3) circle (0.2cm);
+        \draw[green, thick] (9.8,3.35) circle (0.2cm);
+        \draw[green, thick] (9.8,3.85) circle (0.2cm);
+        \draw[green, thick] (9.2,3) circle (0.2cm);
+    \end{tikzpicture}
+    \caption[Errors im \texttt{H-3-norm} Tileset]{Grafische Darstellung des Errors im \texttt{H-3-norm} Tilesets. Die farblichen Kreise deuten dabei Zustände an, zwischen welchen in kTAM durch Aufbau und Lösung von Bindungen gewechselt werden kann. Bindet sich, wie abgebildet, das Tile mit dem Bezeichner \glqq B1\grqq\, an das Molekül in a), so bildet sich das Molekül wie in d) korrekt und das Tile kann durch Kleberstärke zwei nur schwer wieder gebrochen werden. Das ist durch die grüne Farbe des Zustandes gekennzeichnet. Bindet sich jedoch das Tile mit dem Bezeichner \glqq B\grqq\, an das Molekül in a), so wird ein gefährlicher Zustand in b) erreicht. Noch ist das Molekül nicht falsch gebildet, dementsprechend ist der Zustand mit der Farbe Orange dargestellt. Das Tile hat nur die Kleberstärke eins, dargestellt durch den kleinen grünen Kreis. Es sollte im richtigen System gelöst werden. Bindet sich das Tile vor dem Lösen des B-Tiles mit dem Tile, das den Bezeichner \glqq C\grqq trägt, entsteht ein gravierender Fehler in der Konstruktion. Wie in c) durch die kleinen grünen Kreise dargestellt, sind die beiden Tiles mit Kleberstärke zwei verbunden, sowie jeweils mit einem Kleber am restlichen Molekül. Somit ist die Verbindung stark genug, um in einem System der Temperatur zwei nicht nach kurzer Zeit wieder gelöst zu werden. Es ist zwar möglich, dass das Molekül so wieder aufbricht, jedoch ist dies laufzeittechnisch nicht wünschenswert.}
+    \label{fig:H3errors}
+\end{figure}
+
+Bindet sich das Tile mit dem Bezeichner \glqq B\grqq, wie im Übergang zwischen a) und b) zu sehen ist, so kommt es dadurch zu einem gefährlichen Zustand. Das Molekül ist in b) jedoch noch nicht fehlkonstruiert, da das System auf eine Temperatur von zwei festgelegt ist. In b) wird grün markiert, dass das Tile nur mit einer Stärke von eins mit dem restlichen Molekül gebunden ist. Mit den richtigen Parametern in kTAM kann dieses Molekül durch die Bond Breaking Cost wieder entfernt werden. Dies ist durch den grünen Übergang von b) zu a) angedeutet. 
+
+Wird jedoch das Tile mit dem Bezeichner \glqq C\grqq\, gebunden, bevor sich das Tile lösen kann, so kommt es zu einem fehlerhaften Zustand in der Konstruktion. In c) ist zu erkennen, dass für Temperatur zwei sowohl die beiden Tiles untereinander als auch die zwei Tiles zusammen mit dem restlichen Molekül eine ausreichende Kleberstärke besitzen, um nur schwer wieder gebrochen zu werden. Da in kTAM die Kleberstärke jedes einzelnen Tiles betrachtet wird, hat jedes Tile in dem Modell sogar eine Kleberstärke von drei. Dadurch brechen diese Tiles noch unwahrscheinlicher. Mit genügend Zeit und Schritten in kTAM kann das zwar trotzdem passieren, jedoch ist das dem Zufall überlassen.
+
+Zur Lösung des Problems stehen verschiedene Ansätze jenseits des Snaked-Proofreadings zur Verfügung. Eine alternative Implementierung der Assembly könnte in Erwägung gezogen werden. Jedoch ist zu beachten, dass bei bestimmten Implementierungen, etwa beim Äquivalenzvergleich, ähnliche Fehlerstrukturen auftreten können. Dieser Fehler wurde im Kapitel~\ref{cha:grundlagen} vorgestellt. Facet-Errors können durch Snaked-Proofreading erschwert werden, da im hier implementierten Snaked-Proofreading vier Tiles falsch gebunden werden müssen, um den gleichen Fehler zu erhalten. Somit soll im Folgenden zunächst das Tileset \texttt{H-3-norm} simuliert und betrachtet werden. 
+
+
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=299999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+            draw = uzl_oceangreen,
+            boxplot prepared={
+                lower whisker=3392,
+                lower quartile=5014,
+                median=6169,
+                upper quartile=7464,
+                upper whisker=10386
+            }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=136056,
+                    lower quartile=173876,
+                    median=189694,
+                    upper quartile=213680,
+                    upper whisker=249202
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 2 Priolevel}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=299999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=3340,
+                    lower quartile=5218,
+                    median=6205,
+                    upper quartile=7298,
+                    upper whisker=13480
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=136696,
+                    lower quartile=149817,
+                    median=176048,
+                    upper quartile=191343,
+                    upper whisker=224928
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 1 Flagtile}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=499999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+            draw = uzl_oceangreen,
+            boxplot prepared={
+                lower whisker=4704,
+                lower quartile=7822,
+                median=10208,
+                upper quartile=12022,
+                upper whisker=21616
+            }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=211044,
+                    lower quartile=242750,
+                    median=300960,
+                    upper quartile=361454,
+                    upper whisker=402402
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 8 Priolevel}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=499999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=5316,
+                    lower quartile=8630,
+                    median=10333,
+                    upper quartile=14514,
+                    upper whisker=17569
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=276958,
+                    lower quartile=291009,
+                    median=331204,
+                    upper quartile=383453,
+                    upper whisker=426904
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 3 Flagtiles}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=699999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+            draw = uzl_oceangreen,
+            boxplot prepared={
+                lower whisker=6804,
+                lower quartile=13802,
+                median=16825,
+                upper quartile=20728,
+                upper whisker=34866
+            }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=373644,
+                    lower quartile=454620,
+                    median=557126,
+                    upper quartile=592870,
+                    upper whisker=613694
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 20 Priolevel}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=1699999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=18755,
+                    lower quartile=40717,
+                    median=48573,
+                    upper quartile=59367,
+                    upper whisker=82477
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1453274,
+                    lower quartile=1453274,
+                    median=1610823,
+                    upper quartile=1623695,
+                    upper whisker=1623695
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm} + 10 Flagtiles}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=299999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=873,
+                    lower quartile=2985,
+                    median=3791,
+                    upper quartile=4899,
+                    upper whisker=10501
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=100434,
+                    lower quartile=151746,
+                    median=175599,
+                    upper quartile=190106,
+                    upper whisker=247784
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-norm}}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading für fehleranfällige Assembly]{Darstellung der Simulationsergebnisse von Proofreading für die fehleranfällige Assembly des Tilesets \texttt{H-3-norm} mit verschiedenen Variationen des Tilesets.}
+    \label{fig:proof_error_assemblies}
+\end{figure}
+
+\begin{table}
+    \centering 
+    \begin{tabular}{lrr}
+        Tileset & Assemblygröße & Tilesetgröße \\\hline
+        \texttt{H-3-norm} (mit SP)           & 15 (60)  & 26 (104) \\
+        \texttt{H-3-norm}-1F (mit SP)       & 18 (72) & 30 (120) \\
+        \texttt{H-3-norm}-3F (mit SP)       & 24 (96) & 38 (152) \\
+        \texttt{H-3-norm}-10F (mit SP)      & 45 (180) & 66 (264) \\
+        \texttt{H-3-norm}-2P (mit SP)       & 18 (72) & 32 (128) \\
+        \texttt{H-3-norm}-8P (mit SP)       & 18 (72) & 50 (200) \\
+        \texttt{H-3-norm}-20P (mit SP)      & 18 (72) & 86 (344) \\\hline
+    \end{tabular}
+    \caption[Tileset- und Assemblygrößen für das \texttt{H-3-norm} Tileset]{Tileset- und Assemblygrößen für das \texttt{H-3-norm} Tileset und Varianten. In Klammern ist die jeweilige Größe mit Snaked-Proofreading (SP) abgebildet, die immer das Vierfache sind. Die Größen sind für sowohl alle drei Flag- (F) als auch Prioritätslevelfälle (P) mit den entsprechenden Quantitäten angegeben.}
+    \label{tab:proof_growth}
+\end{table}
+
+Die Fehler in den vorherigen Simulationen traten zwar im Fall von drei und zehn Flags auf, doch das Problem liegt nicht bei den Flags. Der Fehler kann bei allen Self-Assemblies des \texttt{H-3-norm} Tileset vorkommen, weshalb im Folgenden alle Fälle betrachtet werden, obwohl die Fehler nur bei Flags vorgekommen sind.
+
+Das Tileset \texttt{H-3-norm} weist ohne weitere Ergänzungen eine beachtliche Größe von 26 Tiles auf. Bei Anwendung des Snaked-Proofreading-Verfahrens führt allein dies zur vierfachen Größe in der Assembly. Kombiniert mit einer Molekülhöhe von drei, erhöht sich die Anzahl der notwendigen Tiles für Mechanismen wie Flags und Prioritätslevel weiter. Das Resultat dieses deutlichen Wachstums ist in Tabelle~\ref{tab:proof_growth} zu sehen. Solch umfangreiche Assemblies resultieren in kTAM in langwierigen Simulationen, da ein umfangreiches Molekül in Kombination mit einem großen Tileset eine Vielzahl an möglichen Verbindungsstellen für zufällige Tests bietet. Bei der ersten Messung von \texttt{H-3-norm} mit drei Flags und Snaked-Proofreading wurde die Messung in kTAM nach zwei Millionen Schritten abgebrochen, da die Simulation einige Stunden lief und die Assembly für 500.000 Schritte zwischen 86 und 89 Tiles von finalen 96 Tiles hin- und herschwankte. Dementsprechend wurden alle folgenden Simulationen mit anderen Parametern durchgeführt. Die Binding Cost wurde auf 15 gesetzt. Diese ist in allen anderen Simulationen auf 16 gesetzt. Die Bond Breaking Cost wurde auf zwölf gesetzt. Diese ist in allen anderen Simulationen auf elf.
+
+
+Die Simulationsergebnisse für Snaked-Proofreading sind in Abbildung~\ref{fig:proof_error_assemblies} zu sehen und zeigen, dass Snaked-Proofreading auf einer Assembly wie \texttt{H-3-norm} zu großen Problemen in der Laufzeit führt. Auch auf dem unveränderten Tileset ist der Unterschied in kTAM hoch, doch sobald weitere Mechanismen hinzukommen, wird dieser Unterschied noch merkbarer. Das liegt an der Höhe und Länge der Assembly. Dadurch, dass \texttt{H-3-norm} eine Höhe von drei besitzt, müssen für die Implementierung von Flags oder Prioritätsleveln mindestens drei Tiles in der Assembly hinzugefügt werden. Mit Snaked-Proofreading bedeutet das mindestens zwölf zusätzliche Tiles für dieselbe Implementierung. Das Extrembeispiel mit zehn Flags verdeutlicht das Problem besonders: Hier wird die Assembly statt um 30 Tiles um ganze 120 Tiles erweitert, was zu besonders hohen Schrittzahlen führt.
+
+Für \texttt{H-3-norm} kann festgehalten werden, dass das Snaked-Proofreading mit einem hohen Preis in der Laufzeit einhergeht. In keiner der teilweise mehrere Stunden dauernden Simulationen trat jedoch derselbe Fehler auf wie in den Simulationen ohne Snaked-Proofreading. In bestimmten Anwendungsfällen kann Snaked-Proofreading trotzdem die richtige Entscheidung sein. Dies ist insbesondere dann der Fall, wenn die Laufzeit eine geringe Priorität hat oder die korrekte Bildung der Self-Assembly eine hohe Priorität besitzt.
+
+\subsection{Snaked-Proofreading für die erstellten Tilesets}
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=29999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=44,
+                    lower quartile=70,
+                    median=136,
+                    upper quartile=232,
+                    upper whisker=772
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6112,
+                    lower quartile=9914,
+                    median=13973,
+                    upper quartile=16370,
+                    upper whisker=21450
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-mini}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=69999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=52,
+                    lower quartile=130,
+                    median=282,
+                    upper quartile=690,
+                    upper whisker=1420
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=16270,
+                    lower quartile=28010,
+                    median=32559,
+                    upper quartile=38410,
+                    upper whisker=53748
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=99999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=119,
+                    lower quartile=249,
+                    median=357,
+                    upper quartile=1009,
+                    upper whisker=4453
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=39418,
+                    lower quartile=57774,
+                    median=66744,
+                    upper quartile=81674,
+                    upper whisker=95938
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=499999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=117,
+                    lower quartile=409,
+                    median=829,
+                    upper quartile=1763,
+                    upper whisker=5855
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=71076,
+                    lower quartile=182384,
+                    median=253978,
+                    upper quartile=304278,
+                    upper whisker=400446
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-groß}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=19999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=98,
+                    lower quartile=188,
+                    median=258,
+                    upper quartile=346,
+                    upper whisker=730
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6462,
+                    lower quartile=8802,
+                    median=10540,
+                    upper quartile=13670,
+                    upper whisker=17766
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-klein}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=299999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=686,
+                    lower quartile=1804,
+                    median=2228,
+                    upper quartile=2840,
+                    upper whisker=4872
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=56870,
+                    lower quartile=75340,
+                    median=98118,
+                    upper quartile=123668,
+                    upper whisker=210810
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-norm}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=69999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=295,
+                    lower quartile=605,
+                    median=836,
+                    upper quartile=1091,
+                    upper whisker=3071
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=18620,
+                    lower quartile=23416,
+                    median=25564,
+                    upper quartile=29290,
+                    upper whisker=55950
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-klein}}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading-Assemblies]{Darstellung der Simulationsergebnisse von Proofreading auf den erstellten Assemblies abzüglich des zuvor betrachteten \texttt{H-3-norm} Tilesets.}
+    \label{fig:proof_simulation}
+\end{figure}
+
+Die Messergebnisse in Abbildung~\ref{fig:proof_simulation} weisen ein ähnliches Bild zur vorherigen Sektion auf. Der Unterschied in den Simulationen der Tilesets in kTAM ist merklich größer für Snaked-Proofreading. So groß, dass für die Tilesets wie zum Beispiel in d) in einem vernünftigen Skalenbereich die Messungen ohne Snaked-Proofreading kaum noch zu erkennen sind. Für kleine Tilesets kann jedoch festgestellt werden, dass Snaked-Proofreading einen kleineren Einfluss hat.
+
+Wenn eine präventive Fehlerbehandlung in einem Kontext benötigt wird, so könnte der Einsatz von Snaked-Proofreading trotzdem gerechtfertigt sein. Dabei zeigen die Messreihen, dass kleinere Assemblies generell weniger Probleme mit diesem Verfahren haben. Es ist zu beachten, dass solche kleineren Assemblies auch insgesamt weniger fehleranfällig sind. In Tilesets für Assemblies der Höhe eins ist es beispielsweise fast unmöglich einen Facet-Error zu erhalten, da das Molekül nicht über mehrere Kleber innerhalb verbunden ist. Daraus kann gefolgert werden, dass Snaked-Proofreading für die Tilesets \texttt{H-1-groß} und \texttt{H-1-norm} nicht notwendig sein dürfte, da bei so großen Tilesets für Moleküle der Höhe eins der Effekt gering und die Kosten hoch sind. Gleichzeitig sind die hier diskutierten Ergebnisse mit anderen Parametern verbunden als die Simulationen von \texttt{H-3-norm}. Dementsprechend kann angenommen werden, dass der Effekt von Snaked-Proofreading hier nicht so stark ist wie bei dem Größten der acht Tilesets.
+
+\subsection{Snaked-Proofreading für Acknowledgements}
+
+\label{sec:eval_proof_ack}
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=250,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=1,
+                    lower quartile=1,
+                    median=1,
+                    upper quartile=1,
+                    upper whisker=1
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=18,
+                    lower quartile=60,
+                    median=75,
+                    upper quartile=106,
+                    upper whisker=226
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Ack-1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=9999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+            draw = uzl_oceangreen,
+            boxplot prepared={
+                lower whisker=32,
+                lower quartile=78,
+                median=95,
+                upper quartile=128,
+                upper whisker=166
+            }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1214,
+                    lower quartile=3342,
+                    median=3714,
+                    upper quartile=4046,
+                    upper whisker=5672
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Ack-2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=39999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=393,
+                    lower quartile=533,
+                    median=641,
+                    upper quartile=959,
+                    upper whisker=1347
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=18536,
+                    lower quartile=23298,
+                    median=25806,
+                    upper quartile=29980,
+                    upper whisker=34476
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Ack-3}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=6999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={Ack-3, Ack-2 mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=393,
+                    lower quartile=533,
+                    median=641,
+                    upper quartile=959,
+                    upper whisker=1347
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1214,
+                    lower quartile=3342,
+                    median=3714,
+                    upper quartile=4046,
+                    upper whisker=5672
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Ack-3 ohne SP vs. Ack-2 mit SP}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading-Assemblies von Acknowledgements.]{Darstellung der Simulationsergebnisse von Proofreading auf den Assemblies für Acknowledgements. Neben den Vergleichen der Tilesets in (a), (b) und (c), wird in (d) das Ack-3 Tileset ohne Snaked-Proofreading mit dem Ack-2 Tileset mit Snaked-Proofreading verglichen.}
+    \label{fig:proof_simulation_acks}
+\end{figure}
+
+In dieser Untersektion soll betrachtet werden, was in Sektion~\ref{sec:eval_ack} angedeutet wurde: der Vergleich von Acknowledgement Self-Assemblies mit und ohne Snaked-Proofreading. Besonders interessant ist der Vergleich des \texttt{Ack-2} Tilesets mit Snaked-Proofreading gegenüber dem \texttt{Ack-3} Tileset ohne dieses Verfahren.
+
+In Abbildung~\ref{fig:proof_simulation_acks} sind die Messergebnisse dargestellt. Der leere Boxplot in a) zeigt, dass \texttt{Ack-1} ohne Snaked-Proofreading konstant ohne einen Schritt in jeglichen Simulationsmodellen durchgeführt werden kann. Mit Snaked-Proofreading gibt es in \texttt{Ack-1} vier Tiles, die simuliert werden können, weshalb dafür Ergebnisse dargestellt werden können. Der Unterschied zwischen \texttt{Ack-2} und \texttt{Ack-3} ist klarer erkennbar. Trotz Snaked-Proofreading bleiben die Tilesets, aufgrund der ursprünglichen Größe, relativ klein. Im Vergleich zu vorherigen Messreihen zeigt nur \texttt{Ack-3} eine deutlich höhere Komplexität im Snaked-Proofreading. Doch auch diese führt mit einem Median von 25.000 Schritten in kTAM recht schnell die Self-Assembly durch. Das ist vergleichbar mit \texttt{H-2-klein} oder \texttt{H-3-klein} aus der vorherigen Untersektion.
+
+Der bedeutende Vergleich in dieser Untersektion ist jedoch zwischen dem Tileset \texttt{Ack-3} und dem Snaked-Proofreading Tileset von \texttt{Ack-2}. Das Problem des \texttt{Ack-2} Tilesets ist, dass durch einen einzelnen Wachstums- und Nukleationsfehler die Liganden gebunden werden können, ohne dass sich die gesamte Assembly bildet. Durch Snaked-Proofreading wird dies auf acht wiederholte Wachstumsfehler erweitert, während in Ack-3 zwei Wachstumsfehler benötigt werden, um den gleichen Fehler von zuvor zu wiederholen. In Abbildung~\ref{fig:proof_simulation_acks} d) sind die Simulationsergebnisse beider Tilesets visualisiert. Es wird deutlich, dass \texttt{Ack-2} mit Snaked-Proofreading mehr Schritte für die Self-Assembly benötigt als \texttt{Ack-3}. Im Durchschnitt beansprucht \texttt{Ack-2} mit Snaked-Proofreading viermal so viele Schritte wie \texttt{Ack-3}. Jedoch können in der Self-Assembly auch viermal so viele Wachstumsfehler gemacht werden. 
+
+Die Entscheidung für eine bestimmte Acknowledgement-Implementierung hängt von der jeweiligen Anwendung ab: Es muss abgewogen werden zwischen der Schnelligkeit der Self-Assembly und der gewünschten Zuverlässigkeit.
+
+\subsection{Snaked-Proofreading für Flags}
+
+Diese Untersektion wird die Simulationsergebnisse von Snaked-Proofreading im Hinblick auf die Implementierung von Flags evaluieren. Dabei wurde das Beispiel mit drei Flags für mehrere Tilesets verwendet und simuliert. Es wurden drei Flags gewählt, da es sich dabei um ein nicht minimales und gleichzeitig realistisches Beispiel handelt.
+
+Die Messergebnisse in Abbildung~\ref{fig:proof_simulation_flags} zeigen, dass Snaked-Proofreading auf Flags einen großen Einfluss hat. Die Abbildung ist für jeden Graphen wie folgt aufgeteilt: Links sind die Simulationsergebnisse für Tilesets mit Flags, jedoch ohne Snaked-Proofreading, dargestellt. In der Mitte befinden sich die Messergebnisse für Tilesets mit Snaked-Proofreading, aber ohne Flags. Rechts werden schließlich die Ergebnisse für Tilesets mit sowohl Snaked-Proofreading als auch Flags präsentiert. 
+
+Der hohe Aufwand für Snaked-Proofreading mit Flags liegt daran, dass Flags einen großen Einfluss auf die Assemblygröße haben. Im Beispiel des \texttt{H-1-mini} Tilesets erhöht sich durch die drei Flags die Assembly von der Größe vier auf die Größe sieben. Mit Snaked-Proofreading wächst die Assembly von 16 Tiles auf 25 Tiles. Es ist dabei klar zu erkennen, dass in a) und b) für \texttt{H-1-mini} und \texttt{H-1-norm} ein großer Sprung zwischen Snaked-Proofreading ohne Flags zu Snaked-Proofreading mit Flags existiert. Dieser Unterschied ist in c) und d) für \texttt{H-2-klein} und \texttt{H-3-klein} noch einmal deutlicher. Das liegt daran, dass bei Molekülhöhe zwei und drei weitere Tiles für Flags benötigt werden.
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=149999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Flag, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=247,
+                    lower quartile=621,
+                    median=837,
+                    upper quartile=1111,
+                    upper whisker=2159
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6112,
+                    lower quartile=9914,
+                    median=13973,
+                    upper quartile=16370,
+                    upper whisker=21450
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=39658,
+                    lower quartile=49888,
+                    median=59273,
+                    upper quartile=65282,
+                    upper whisker=100373
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-mini} + Flags}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=399999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Flag, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=800,
+                    lower quartile=1072,
+                    median=1385,
+                    upper quartile=2832,
+                    upper whisker=8170
+                }
+            ] coordinates {};    
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=39418,
+                    lower quartile=57774,
+                    median=66744,
+                    upper quartile=81674,
+                    upper whisker=95938
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=124124,
+                    lower quartile=176754,
+                    median=229513,
+                    upper quartile=267809,
+                    upper whisker=397180
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-norm} + Flags}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=149999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Flag, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=844,
+                    lower quartile=1658,
+                    median=2054,
+                    upper quartile=2512,
+                    upper whisker=3516
+                }
+            ] coordinates {};    
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6462,
+                    lower quartile=8802,
+                    median=10540,
+                    upper quartile=13670,
+                    upper whisker=17766
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=46118,
+                    lower quartile=65058,
+                    median=75188,
+                    upper quartile=86822,
+                    upper whisker=107768
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-klein} + Flags}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=249999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Flag, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=2164,
+                    lower quartile=5076,
+                    median=5869,
+                    upper quartile=8126,
+                    upper whisker=13334
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=18620,
+                    lower quartile=23416,
+                    median=25564,
+                    upper quartile=29290,
+                    upper whisker=55950
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=104688,
+                    lower quartile=140949,
+                    median=185341,
+                    upper quartile=202361,
+                    upper whisker=211156
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-klein} + Flags}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading-Assemblies mit Flags.]{Darstellung der Simulationsergebnisse von Proofreading-Assemblies mit Flags. Dabei werden für jedes Tileset links die Messergebnisse mit Flags, aber ohne Snaked-Proofreading dargestellt. Mittig sind die Messergebnisse ohne Flags aber mit Snaked-Proofreading dargestellt und rechts die Messergebnisse mit beiden Mechanismen.}
+    \label{fig:proof_simulation_flags}
+\end{figure}
+
+Ein Tileset mit Flags durch Snaked-Proofreading zu erweitern, wirkt durch die Messungen schwierig. Wird beides benötigt, so ist aber für Assemblies mit niedriger Molekülhöhe mit weniger Aufwand verbunden, diese Self-Assembly in kTAM durchzuführen. 
+
+\subsection{Snaked-Proofreading für Prioritätslevel}
+
+In dieser Untersektion wird der Einfluss von Snaked-Proofreading auf Prioritätslevel in Assemblies betrachtet. Die Graphen in  Abbildung~\ref{fig:proof_simulation_prio} sind dabei gleich strukturiert wie für die Flag-Simulationen aus der vorherigen Untersektion. In jedem Graphen werden links Tilesets mit Prioritätsleveln ohne Snaked-Proofreading dargestellt. Mittig finden sich die Messergebnisse des Tilesets mit Snaked-Proofreading ohne Prioritätslevel und rechts die Messergebnisse des Tilesets mit Snaked-Proofreading und Prioritätsleveln. Für die Prioritätslevel wurde, genauso wie zuvor bei den Flags, ein nicht minimales und gleichzeitig noch realistisches Beispiel mit acht Prioritätsleveln gewählt.
+
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=199999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Prio, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=114,
+                    lower quartile=514,
+                    median=717,
+                    upper quartile=1326,
+                    upper whisker=3400
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=16270,
+                    lower quartile=28010,
+                    median=32559,
+                    upper quartile=38410,
+                    upper whisker=53748
+                }
+            ] coordinates {};
+    
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=29506,
+                    lower quartile=51768,
+                    median=72470,
+                    upper quartile=84174,
+                    upper whisker=129446
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-klein} + Prio}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=999999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Prio, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=598,
+                    lower quartile=1048,
+                    median=1841,
+                    upper quartile=2840,
+                    upper whisker=4148
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=71076,
+                    lower quartile=182384,
+                    median=253978,
+                    upper quartile=304278,
+                    upper whisker=400446
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=182324,
+                    lower quartile=230160,
+                    median=351831,
+                    upper quartile=477846,
+                    upper whisker=612284
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-groß} + Prio}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=199999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Prio, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=912,
+                    lower quartile=1268,
+                    median=1691,
+                    upper quartile=2172,
+                    upper whisker=3552
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6462,
+                    lower quartile=8802,
+                    median=10540,
+                    upper quartile=13670,
+                    upper whisker=17766
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=42574,
+                    lower quartile=56694,
+                    median=75624,
+                    upper quartile=96718,
+                    upper whisker=104288
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-2-klein} + Prio}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=499999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3},
+                xticklabels={ohne SP, ohne Prio, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=1604,
+                    lower quartile=2900,
+                    median=4020,
+                    upper quartile=4730,
+                    upper whisker=7364
+                }
+            ] coordinates {};    
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=18620,
+                    lower quartile=23416,
+                    median=25564,
+                    upper quartile=29290,
+                    upper whisker=55950
+                }
+            ] coordinates {};
+
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=130512,
+                    lower quartile=159406,
+                    median=190536,
+                    upper quartile=237314,
+                    upper whisker=284582
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-3-klein} + Prio}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading-Assemblies mit Prioritätsleveln.]{Darstellung der Simulationsergebnisse von Proofreading-Assemblies mit Prioritätsleveln. Dabei werden links für jedes Tileset die Messergebnisse dargestellt, die das Tileset mit Prioritätslevel, aber ohne Snaked-Proofreading, zeigen. Mittig sind die Messergebnisse des Tilesets ohne Prioritätslevel aber mit Snaked-Proofreading dargestellt und rechts die Messergebnisse des Tilesets mit beiden Mechanismen.}
+    \label{fig:proof_simulation_prio}
+\end{figure}
+
+Die Simulationsergebnisse zeigen, dass der Aufwand für Snaked-Proofreading in Kombination mit Prioritätsleveln in kTAM merklich ansteigt. Dennoch ist dieser Anstieg nicht so ausgeprägt wie bei der Verwendung von Flags. Das liegt daran, dass mit acht Prioritätstiles das Tileset zwar stark anwächst, die Assembly jedoch konstant gleich groß bleibt, unabhängig von der Größe des Prioritätslevels. Dies ist bei Flags nicht der Fall. In Abbildung~\ref{fig:proof_simulation_prio} a) und b) ist eindeutig zu sehen, dass Prioritätslevel für Moleküle der Höhe eins einen relativ geringen Einfluss haben. Für höhere Moleküle, wie in c) und d) ist der Aufwand eindeutiger, jedoch ist auch dieser nicht so groß, wie zuvor bei den Flags.
+
+Somit ist zu sagen, dass Snaked-Proofreading auf einem Tileset, welches Prioritätslevel implementiert, einen klar höheren Aufwand verursacht. Im Vergleich zu Flags ist dies jedoch bedeutend geringer. Je nach Anwendung ist es somit möglich, die beiden Mechanismen zusammen zu implementieren, ohne dabei die Dauer der Self-Assembly zu stark zu erhöhen.
+
+\subsection{Snaked-Proofreading für Prüfsummen}
+
+Abschließend wird in dieser Sektion das Snaked-Proofreading für Prüfsummen evaluiert. Während Prüfsummen primär zur Fehlererkennung dienen, fällt das Proofreading in den Bereich der Fehlerkorrektur. Eine Kombination beider Mechanismen kann also in Betracht gezogen werden.
+\begin{figure}
+    \centering 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=39999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=19,
+                    lower quartile=97,
+                    median=285,
+                    upper quartile=397,
+                    upper whisker=917
+                }
+            ] coordinates {};    
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=6226,
+                    lower quartile=12404,
+                    median=15765,
+                    upper quartile=21630,
+                    upper whisker=37876
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-mini} + Prüfsumme}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \begin{tikzpicture}[scale=0.7]
+            \begin{axis}[
+                ymin=1, ymax=549999,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={ohne SP, mit SP},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=202,
+                    lower quartile=1814,
+                    median=2914,
+                    upper quartile=5128,
+                    upper whisker=15592
+                }
+            ] coordinates {};
+
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=89053,
+                    lower quartile=191340,
+                    median=261384,
+                    upper quartile=298930,
+                    upper whisker=449340
+                }
+            ] coordinates {};
+    
+            \end{axis}
+        \end{tikzpicture}
+        \caption{\texttt{H-1-klein} + Prüfsumme}
+    \end{subfigure}
+    \caption[Simulationsergebnisse für Proofreading-Assemblies mit Prüfsummen.]{Darstellung der Simulationsergebnisse von Proofreading-Assemblies für Prüfsummen. Dabei ist anzumerken, dass die Messreihen für \texttt{H-1-norm} und \texttt{H-1-groß} nicht abgebildet werden. Das liegt daran, dass die Simulationen der Tilesets mit Prüfsummen nicht abgeschlossen werden konnten, da bei so großen Tilesets die Simulationen teilweise nach über zwei Millionen Schritte noch immer nur ein einzelnes Tile beinhalten. Die Größe der Tilesets und damit das Problem wird in Tabelle~\ref{tab:chksm_growth} dargestellt.}
+    \label{fig:proof_simulation_chksm}
+\end{figure}
+
+Die Messungen für Prüfsummen mit Snaked-Proofreading haben sich als schwierig herausgestellt. Wie in Abbildung~\ref{fig:proof_simulation_chksm} zu erkennen ist, konnte für \texttt{H-1-mini} noch simuliert werden, wie sich das Tileset mit Prüfsumme und Snaked-Proofreading bildet. Auch wenn in Abbildung~\ref{fig:proof_simulation_chksm} b) Messergebnisse für das Tileset \texttt{H-1-klein} dargestellt werden, wurde bereits diese Simulation zuerst abgebrochen. Der Grund davor war, dass nach über zwei Millionen Schritten in \texttt{kTAM} immer noch nicht die Seed-Assembly abgeschlossen wurde. Diese umfasst zwar vier Tiles, doch die finale Self-Assembly endet erst mit 16 Tiles. 
+
+Das liegt daran, dass das \texttt{H-1-klein} Tileset mit Prüfsumme und Snaked-Proofreading 844 Tiles beinhaltet. Deshalb wurden wie zuvor schon bei \texttt{H-3-norm} die Parameter auf Binding Cost = 15 und Bond Breaking Cost = 12 gesetzt, wobei dabei immer noch der in Abbildung~\ref{fig:proof_simulation_chksm} b) dargestellte Abstand vorhanden ist. Simulationen für \texttt{H-1-norm} oder \texttt{H-1-groß} wurden abgebrochen, da diese das Problem nur noch weiter verstärken. 
+
+Wenn sowohl Prüfsummen als auch Snaked-Proofreading berücksichtigt werden, kann die Implementierung in einem Tileset komplex werden. Dennoch sollte betont werden, dass in speziellen Anwendungsfällen, bei denen die Größe des Tilesets in \texttt{kTAM}-Simulationen nicht im Vordergrund steht, eine kombinierte Implementierung beider Ansätze durchaus machbar ist.
+
+Allgemein lässt sich aus allen Simulationen für Snaked-Proofreading schließen, dass dieser Mechanismus stark erhöhte Laufzeiten für die Bildung der Self-Assembly bedeutet. Jedoch gibt es auf der Ebene der Nanogeräte und spezifisch im Anwendungsgebiet der DNA-Tiles wenige Mechanismen, die Fehlerkorrekturen ermöglichen. Der zuvor betrachtete Ansatz für Prüfsummen ist noch aufwendiger als Snaked-Proofreading und beeinflusst keine Growth- oder Facet-Errors. Auch Acknowledgements behandeln diese Fehler nicht. Diese zwei Errorarten sind in Self-Assemblies jedoch von großer Bedeutung. Es kann daher gerechtfertigt sein, Snaked-Proofreading auf ein Tileset anzuwenden, auch wenn dies mit einem erhöhten Aufwand im Prozess der Self-Assembly verbunden ist.
+
+\section{Evaluation Zusammenfassung}
+
+Zusammenfassend lässt sich zur gesamten Evaluation sagen, dass die Größe der Assembly den mit Abstand größten Einfluss auf die Laufzeit einer Self-Assembly hat. Die Größe des Tilesets beeinflusst auch die Laufzeit, jedoch mehr in den Extremen. 
+Das bedeutet, dass der Abstand zwischen den minimal benötigten Schritten und den maximal benötigten Schritten mit der Größe des Tilesets ansteigt.
+
+Die Ergebnisse dieses Kapitels müssen jedoch immer in dem Kontext des zentralen Problems der Tilesetbetrachtung analysiert werden. Für die Evaluation wurde immer das gesamte Tileset gebrachtet, auch wenn in einem realistischen Anwendungsfall immer nur ausgewählte Tiles aus der Menge für die Self-Assembly verwendet werden. Da die Simulation und der Vergleich verschiedener Tilesets sonst jedoch trivial wäre, wurde die Entscheidung für alle Messungen getroffen. Daraus resultieren höhere Schrittzahlen und extremeren Messungen in allen Messungen in \texttt{kTAM}. Bei so großen Molekülen und Tilesets konnten 2HAM und kTHAM wegen der verfügbaren Rechenleistung nicht durchgeführt werden, weshalb kTAM als weniger optimales Simulationsmodell verwendet wurde. 
+
+In diesem Kapitel wurde deutlich, dass die Simulationsergebnisse für die meisten der vorgestellten Mechanismen überzeugende Ergebnisse erzielt haben. Lediglich die beiden Mechanismen zur Fehlerbehandlung, nämlich Prüfsummen und Proofreading, haben sich als besonders anspruchsvoll erwiesen. Besonders die Kombination mehrerer Mechanismen mit Snaked-Proofreading resultierte in deutlich erhöhten Laufzeiten. Dennoch demonstrieren die Ergebnisse dieses Kapitels, dass alle vorgestellten Mechanismen, trotz des gelegentlichen hohen Aufwands, erfolgreich durch Self-Assembly implementiert werden können.

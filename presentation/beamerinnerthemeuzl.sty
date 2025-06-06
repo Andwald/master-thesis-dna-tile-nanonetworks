@@ -1,0 +1,59 @@
+\mode<presentation>
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+    \ifnum\thepage<\getrefbykeydefault{LastPage}{page}{1}\relax%
+      \node (itmlogo) at (0,0) {\includegraphics[width=.3\paperwidth]{Logo_Inst_Telematik_orig}};
+    \fi
+    \ifnum\thepage=1\relax%
+      \node (uzl) at (8.75,-4.1) {
+        \begingroup
+          \sbox0{\includegraphics{Logo_Uzl.pdf}}%
+            \includegraphics[clip,trim=0 0 {.5\wd0} 0,height=\paperheight]{Logo_Uzl.pdf}
+        \endgroup
+      };
+    \fi
+
+    \ifnum\thepage=\getrefbykeydefault{LastPage}{page}{1}\relax%
+      \node at (0,0) {};
+      \node (uzl2) at (10.7,0) {
+        \begingroup
+          \sbox0{\includegraphics{Logo_Uzl.pdf}}%
+            \includegraphics[clip,trim=0 0 {.5\wd0} 0,height=\paperheight]{Logo_Uzl.pdf}
+            \endgroup
+      };
+    \fi
+  \end{tikzpicture}
+}
+
+% Title page
+\defbeamertemplate*{title page}{uzl}[1][]
+{
+   \vskip5cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=.9cm,#1]{title page header}
+      \usebeamerfont{title}\inserttitle\par%
+    \end{beamercolorbox}%
+    \vskip0.5cm%
+    \begin{beamercolorbox}[wd=12cm, leftskip=.78cm]{uzl}
+      \usebeamerfont{uzl} \insertinstitute
+    \end{beamercolorbox}
+     \vskip0.2cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=.94cm,#1]{date}
+      \usebeamerfont{date}\insertdate%
+    \end{beamercolorbox}
+  \vfill
+}
+
+
+\def\contactpage{%
+\begingroup
+\setbeamercolor{background canvas}{bg=uzl_oceangreen_80}
+  \begin{frame}[noframenumbering]
+    \vskip4cm%
+      \textcolor{white}{\Large \IfLanguageName{ngerman}{Kontakt}{Contact}}
+      \vskip1em%
+      \textcolor{white}{\scriptsize\insertauthor}%
+    \vfill
+  \end{frame}
+\endgroup
+}

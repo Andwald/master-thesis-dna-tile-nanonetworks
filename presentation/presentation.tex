@@ -1,0 +1,754 @@
+% !TEX program = xelatex
+% !TEX encoding = UTF-8 Unicode
+% !TEX spellcheck = de_DE
+
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[english,ngerman]{babel}
+\usepackage{fontspec}
+\usepackage{pgfplots}
+\usepgfplotslibrary{statistics}
+\include{tikz_tiles}
+
+\title[Nanonetzwerke]{\huge Übertragung herkömmlicher Netzwerkmechanismen auf
+DNA-Tile-basierte Nanonetzwerke}
+\date{29. November 2023}
+\institute{Universität zu Lübeck}
+\author{%
+	Andreas Waldner \\
+	Institut für Telematik \\
+	\vspace{1em}
+	Universität zu Lübeck \\
+	Ratzeburger Allee 160 \\
+	23562 Lübeck  \\
+	\ding{37} +49 151 61111039 \\
+	\ding{41} andreas.waldner@student.uni-luebeck.de
+}
+
+\usetheme{uzl}
+
+%%%%%%%%%%%%%%%%%%%%%%
+%Redefine the itemization Symbols%
+%\setbeamertemplate{itemize items}[square]
+%\setbeamertemplate{itemize items}[circle]
+%\setbeamertemplate{itemize items}[ball]
+\setbeamertemplate{itemize items}[triangle]
+
+\begin{document}
+
+\maketitle
+
+%\begin{frame}[t]{Slide 1}
+%	Just text content
+%\end{frame}
+
+%\begin{frame}[t]{Slide 2}{With Subtitle and Enumeration}
+%	\begin{enumerate}
+%		\item Very very important point
+%		\item Useful to mention
+%		\item But definitely take attention to this point
+%	\end{enumerate}
+%\end{frame}
+
+%\begin{frame}[t]{Slide 3}{With Two Columns}
+%	\begin{columns}
+%
+%		\begin{column}{0.5\textwidth}
+%			some text here some text here some text here some text here some text here
+%
+%			\begin{itemize}
+%				\item and some
+%				\item more
+%				\item bullet points
+%			\end{itemize}
+%		\end{column}
+%
+%		\begin{column}{0.5\textwidth}
+%			\begin{figure}
+%				\centering
+%				\includegraphics[width=\columnwidth]{test}
+%				\caption{This is a very interesting figure}
+%			\end{figure}
+%		\end{column}
+%
+%	\end{columns}
+%\end{frame}
+
+%\begin{frame}[t]{Slide 4}{With Blocks}
+%	\begin{block}{Example Definion}
+%	This is a grandeous Block for definitions. Use them sparsely, they tend to be annoying.
+%	\end{block}
+%	\begin{exampleblock}{Example Example}
+%	This is a grandeous Block for Examples. Use them sparsely or without borders, they tend to be annoying.
+%	\end{exampleblock}
+%	\begin{alertblock}{Example Alert}
+%	This is a grandeous Block for ALARM. Use them sparsely, they tend to be annoying.
+%	\end{alertblock}
+%\end{frame}
+
+%\begin{frame}[t]{Slide 5}{Code Listing}
+%	\lstinputlisting[language=Java]{sourceCode/codeexample.java}
+%\end{frame}
+
+\begin{frame}[t]{Einleitung}
+    \begin{columns}[t]
+        \begin{column}{0.37\textwidth}
+            \begin{itemize}
+                \item verschiedene \textbf{\color{uzl_oceangreen}{Nanotechnologien}}
+                \begin{itemize}
+                    \item Materialwiss.
+                    \item \dots
+                    \item \textbf{\color{uzl_oceangreen}{Medizin}}
+                \end{itemize}
+                \item $1$ nm = $10^{-9}$ m
+                \item Ein menschliches Haar ist $50.000 - 80.000$ Nanometer breit.
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.63\textwidth}
+            \begin{figure}
+                \centering 
+                \includegraphics[width=0.9\columnwidth]{figures/In-Body_Networks.png}
+            \end{figure}
+        \end{column}   
+    \end{columns}
+\end{frame}
+
+\begin{frame}[t]{Grundlagen}{DNA}
+    \begin{itemize}
+        \item \textbf{\color{uzl_oceangreen}{Desoxyribonukleinsäure}} (DNS oder engl. \textbf{\color{uzl_oceangreen}{DNA}})
+        \begin{itemize}
+            \item Zuckerphosphatrückgrat (gelb)
+            \item Adenin (A) \& Thymin (T) und Guanin (G) \& Cytosin (C)
+        \end{itemize}
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{figures/DNA_Doppelhelix_Farbe.png}
+        \caption{Ein farbcodiertes DNA Modell.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Grundlagen}{Tiles}
+    \begin{itemize}
+        \item Für diese Arbeit am Wichtigsten: \textbf{\color{uzl_oceangreen}{Tiles}}
+        \begin{itemize}
+            \item Wang-Tiles, DX-Tiles, TX-Tiles in der Arbeit näher betrachtet
+            \item \textbf{\color{uzl_oceangreen}{Holliday Junctions}}
+        \end{itemize}
+    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\columnwidth]{Holliday_Junction.png}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \begin{figure}
+                \centering
+                \begin{tikzpicture}[scale = 2.0]
+                    \tileBsp{1}{1}
+                \end{tikzpicture}
+            \end{figure}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[t]{Grundlagen}{Self-Assembly}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            % Step 1
+            \onslide<1->{\tileHThreeNormSigma{4.8}{0}}
+            % Step 2
+            \onslide<2->{\tileHThreeNormA{4.8}{1.2}}
+            \onslide<2->{\tileHThreeNormS{4.8}{-1.2}}
+            % Step 3
+            \onslide<3->{\tileHThreeNormB{3.6}{1.2}}
+            % Step 4
+            \onslide<4->{\tileHThreeNormT{3.6}{-1.2}}
+            % Step 5
+            \onslide<5->{\tileHThreeNormC{2.4}{1.2}}
+            % Step 6
+            \onslide<6->{\tileHThreeNormD{1.2}{1.2}}
+            % Step 7
+            \onslide<7->{\tileHThreeNormZero{3.6}{0}}
+            % Step 8
+            \onslide<8->{\tileHThreeNormU{2.4}{-1.2}}
+            % Step 9
+            \onslide<9->{\tileHThreeNormOne{2.4}{0}}
+            % Step 10
+            \onslide<10->{\tileHThreeNormV{1.2}{-1.2}}
+            % Step 11
+            \onslide<11->{\tileHThreeNormO{1.2}{0}}
+            % Step 12
+            \onslide<12->{\tileHThreeNormX{0}{0}}
+            % Step 13
+            \onslide<13->{\tileHThreeNormE{0}{1.2}}
+            % Step 14
+            \onslide<14->{\tileHThreeNormW{0}{-1.2}}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Grundlagen}{Nanonetzwerke}
+    \begin{figure}
+        \centering
+        \only<1>{\includegraphics[width=\textwidth]{Nanonetzwerk1.png}}
+        \only<2>{\includegraphics[width=\textwidth]{Nanonetzwerk2.png}}
+        \only<3>{\includegraphics[width=\textwidth]{Nanonetzwerk3.png}}
+        \only<4>{\includegraphics[width=\textwidth]{Nanonetzwerk4.png}}
+    \end{figure}
+\end{frame}
+
+%\begin{frame}[t]{Grundlagen}{Kommunikation}
+%    \begin{itemize}
+%        \item viele herkömmliche Kommunikationsprotokolle folgen dem ISO/OSI-Modell
+%    \end{itemize}
+%    \begin{figure}
+%        \centering
+%        \includegraphics[width=0.9\textwidth]{OSI.pdf}
+%    \end{figure}
+%\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Tilegenerierung}
+    \begin{itemize}
+        \item Nachrichtenmenge $x$
+        \item Gewichtung von Tileset $w_1$ und Assembly $w_2$ 
+        \item Beispiel:
+        \begin{itemize}
+            \item $x = 100$, $w_1 = 1$, und $w_2 = 10$
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.5cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            % Step 1
+            \onslide<1->{\tileHOneKleinSigma{3.6}{0}}
+            % Step 2
+            \onslide<2->{\node at (2.4, 1.2) {(0-9)};}
+            \onslide<2->{\tileHOneKleinA{2.4}{0}}
+            % Step 3
+            \onslide<3->{\node at (1.2, 1.2) {(0x-9x)};}
+            \onslide<3->{\tileHOneKleinB{1.2}{0}}
+            % Step 4
+            \onslide<4->{\tileHOneKleinC{0}{0}}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Fehlererkennung}
+    \begin{itemize}
+        \item Prüfsummen
+        \item Idee: Information im Inneren des Nachrichtenmoleküls weitergeben
+    \end{itemize}
+    \vspace{1cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=1.2]
+            % Step 1
+            \onslide<1->{\tileChecksumPresSigma{3.6}{0}}
+            % Step 2
+            \onslide<2->{\node at (2.4, 1.2) {(0-9)};}
+            \onslide<2->{\tileChecksumPresA{2.4}{0}}
+            % Step 3
+            \onslide<3->{\node at (1.2, 1.2) {(00-99)};}
+            \onslide<3->{\tileChecksumPresB{1.2}{0}}
+            % Step 4
+            \onslide<4->{\node at (0, 1.2) {(00-99)};}
+            \onslide<4->{\tileChecksumPresC{0}{0}}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Höhe verändern}
+    \begin{itemize}
+        \item bislang Self-Assemblies der Höhe eins betrachtet
+        \item Höhe vergrößern trivial
+        \item Höhe verkleinern selten möglich, ohne Informationen zu verändern
+    \end{itemize}
+    \begin{figure}
+        \centering 
+        \begin{tikzpicture}
+            \tileAssemblyHeightB{0}{0}
+            \tileAssemblyHeightA{1.2}{0}
+            \tileAssemblyHeightSigma{2.4}{0}
+            %
+            \node at (3.4,0) {$\Rightarrow$};
+            %
+            \tileAssemblyHeightO{4.4}{1.2}
+            \tileAssemblyHeightN{5.6}{1.2}
+            \tileAssemblyHeightM{6.8}{1.2}
+            %
+            \tileAssemblyHeightBBig{4.4}{0}
+            \tileAssemblyHeightA{5.6}{0}
+            \tileAssemblyHeightSigmaBig{6.8}{0}
+            %
+            \tileAssemblyHeightZ{4.4}{-1.2}
+            \tileAssemblyHeightY{5.6}{-1.2}
+            \tileAssemblyHeightX{6.8}{-1.2}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Fehlerbehandlung}
+    \begin{itemize}
+        \item Proofreading
+        \item in dieser Arbeit Snaked Proofreading
+    \end{itemize}
+    \vspace{0.5cm}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale = 1.3]
+            \tileProofSnakedLU{2.4}{-0.6}
+            \tileProofSnakedLO{2.4}{0.6}
+            \tileProofSnakedRU{3.6}{-0.6}
+            \tileProofSnakedRO{3.6}{0.6}
+            \node[scale = 2.5] at (1.2,0) {$\Rightarrow$};
+            \tileProofStart{0}{0}
+        \end{tikzpicture}
+    \end{figure}
+    
+\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Problem von Snaked Proofreading}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.9]
+            \tileSPProblemBZero{-3.4}{6}
+            \tileSPProblemYOne{-3.4}{0}
+            \tileSPProblemOneBot{-5.2}{4.5}
+            \tileSPProblemZero{-5.2}{3}
+            \tileSPProblemTwo{-5.2}{1.5}
+            %
+            \tileSPProblemBOne{-3.4}{4.2}
+            \tileSPProblemOneTop{-3.4}{3}
+            \tileSPProblemYZero{-3.4}{1.8}
+            %
+            \tileSPProblemA{-2.2}{4.2}
+            \tileSPProblemSigma{-2.2}{3}
+            \tileSPProblemX{-2.2}{1.8}
+            %
+            %
+            %
+            %\tileSPProblemSnakedZeroRT{0.3}{7.6}
+            %\draw[red, thick] (0.3,7.95) circle (0.2cm);
+            %\tileSPProblemSnakedOneTRT{1.8}{7.6}
+            %\draw[red, thick] (1.8,7.2) circle (0.2cm);
+            %\tileSPProblemSnakedTwoRT{3.3}{7.6}
+            %\draw[red, thick] (3.3,7.2) circle (0.2cm);
+            %
+            \only<1>{\tileSPProblemSnakedBOneLT{0}{6}}
+            \only<1>{\tileSPProblemSnakedBOneRT{1.2}{6}}
+            \only<1>{\tileSPProblemSnakedBOneLB{0}{4.8}}
+            \only<1>{\tileSPProblemSnakedBOneRB{1.2}{4.8}}
+            %
+            \only<1>{\tileSPProblemSnakedZeroRB{1.2}{2.4}}
+            %
+            \only<1>{\tileSPProblemSnakedYZeroLT{0}{1.2}}
+            \only<1>{\tileSPProblemSnakedYZeroRT{1.2}{1.2}}
+            \only<1>{\tileSPProblemSnakedYZeroLB{0}{0}}
+            \only<1>{\tileSPProblemSnakedYZeroRB{1.2}{0}}
+            %
+            \only<1>{\tileSPProblemSnakedALT{2.4}{6}}
+            \only<1>{\tileSPProblemSnakedART{3.6}{6}}
+            \only<1>{\tileSPProblemSnakedALB{2.4}{4.8}}
+            \only<1>{\tileSPProblemSnakedARB{3.6}{4.8}}
+            %
+            \only<1>{\tileSPProblemSnakedSigmaLT{2.4}{3.6}}
+            \only<1>{\tileSPProblemSnakedSigmaRT{3.6}{3.6}}
+            \only<1>{\tileSPProblemSnakedSigmaLB{2.4}{2.4}}
+            \only<1>{\tileSPProblemSnakedSigmaRB{3.6}{2.4}}
+            %
+            \only<1>{\tileSPProblemSnakedXLT{2.4}{1.2}}
+            \only<1>{\tileSPProblemSnakedXRT{3.6}{1.2}}
+            \only<1>{\tileSPProblemSnakedXLB{2.4}{0}}
+            \only<1>{\tileSPProblemSnakedXRB{3.6}{0}}
+            %
+            %
+            %
+            %
+            \only<2>{\tileSPProblemSnakedBOneLT{0}{6}}
+            \only<2>{\tileSPProblemSnakedBOneRT{1.2}{6}}
+            \only<2>{\tileSPProblemSnakedBOneLB{0}{4.8}}
+            \only<2>{\tileSPProblemSnakedBOneRB{1.2}{4.8}}
+            %
+            \only<2>{\tileSPProblemSnakedOneTLT{0}{3.6}}
+            \only<2>{\tileSPProblemSnakedOneTRTFix{1.2}{3.6}}
+            \only<2>{\tileSPProblemSnakedOneTLB{0}{2.4}}
+            \only<2>{\tileSPProblemSnakedZeroRBFix{1.2}{2.4}}
+            %
+            \only<2>{\tileSPProblemSnakedYZeroLT{0}{1.2}}
+            \only<2>{\tileSPProblemSnakedYZeroRT{1.2}{1.2}}
+            \only<2>{\tileSPProblemSnakedYZeroLB{0}{0}}
+            \only<2>{\tileSPProblemSnakedYZeroRB{1.2}{0}}
+            %
+            \only<2>{\tileSPProblemSnakedALT{2.4}{6}}
+            \only<2>{\tileSPProblemSnakedART{3.6}{6}}
+            \only<2>{\tileSPProblemSnakedALB{2.4}{4.8}}
+            \only<2>{\tileSPProblemSnakedARB{3.6}{4.8}}
+            %
+            \only<2>{\tileSPProblemSnakedSigmaLT{2.4}{3.6}}
+            \only<2>{\tileSPProblemSnakedSigmaRT{3.6}{3.6}}
+            \only<2>{\tileSPProblemSnakedSigmaLB{2.4}{2.4}}
+            \only<2>{\tileSPProblemSnakedSigmaRB{3.6}{2.4}}
+            %
+            \only<2>{\tileSPProblemSnakedXLT{2.4}{1.2}}
+            \only<2>{\tileSPProblemSnakedXRT{3.6}{1.2}}
+            \only<2>{\tileSPProblemSnakedXLB{2.4}{0}}
+            \only<2>{\tileSPProblemSnakedXRB{3.6}{0}}
+            %
+            \only<2>{\draw[green, thick] (1,2.6) rectangle (1.4,3.4);}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+%\begin{frame}[t]{Konzept \& Konstruktion}{Flags}
+%    \begin{itemize}
+%        \item Flags können genutzt werden, um weitere Informationen in einem Nachrichtenmolekül darzustellen
+%    \end{itemize}
+%    \begin{figure}
+%        \centering 
+%        \begin{tikzpicture}[scale=0.95]
+%            \tileFlagsHeigthThreeZ{0}{-9}
+%            \tileFlagsHeigthThreeE{0}{-10.2}
+%            \tileFlagsHeigthThreeP{0}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeY{1.2}{-9}
+%            \tileFlagsHeigthThreeD{1.2}{-10.2}
+%            \tileFlagsHeigthThreeO{1.2}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeX{2.4}{-9}
+%            \tileFlagsHeigthThreeC{2.4}{-10.2}
+%            \tileFlagsHeigthThreeN{2.4}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeWAlt{3.6}{-9}
+%            \tileFlagsHeigthThreeSigma{3.6}{-10.2}
+%            \tileFlagsHeigthThreeMAlt{3.6}{-11.4}
+%            %
+%            \node at (4.6,-10.2) {$\Rightarrow$};
+%            %
+%            \tileFlagsHeigthThreeZ{5.6}{-9}
+%            \tileFlagsHeigthThreeE{5.6}{-10.2}
+%            \tileFlagsHeigthThreeP{5.6}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeY{6.8}{-9}
+%            \tileFlagsHeigthThreeD{6.8}{-10.2}
+%            \tileFlagsHeigthThreeO{6.8}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeX{8}{-9}
+%            \tileFlagsHeigthThreeC{8}{-10.2}
+%            \tileFlagsHeigthThreeN{8}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeG{9.2}{-9}
+%            \tileFlagsHeigthThreeFOne{9.2}{-10.2}
+%            \tileFlagsHeigthThreeH{9.2}{-11.4}
+%            %
+%            \tileFlagsHeigthThreeW{10.4}{-9}
+%            \tileFlagsHeigthThreeSigma{10.4}{-10.2}
+%            \tileFlagsHeigthThreeM{10.4}{-11.4}
+%        \end{tikzpicture}
+%    \end{figure}
+%\end{frame}
+
+\begin{frame}[t]{Konzept \& Konstruktion}{Weiteres}
+    \begin{itemize}
+        \item Weitere \textbf{\color{uzl_oceangreen}{Mechanismen}} herkömmlicher Kommunikationsprotokolle näher in der Arbeit betrachtet
+        \item Beispiele:
+        \begin{itemize}
+            \item Flags
+            \item Gerechtigkeit im Medium durch Prioritätslevel
+            \item Adressierung
+            \item Framing 
+            \item Datenflusskontrolle durch Acknowledgements
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Das Skript}
+    \begin{itemize}
+        \item Skript Präsentation
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Das Skript}{Beispiel}
+    \begin{minipage}{\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \tileHTwoKleinZ{-1.2}{1.2}
+            \tileHTwoKleinY{0}{1.2}
+            \tileHTwoKleinX{1.2}{1.2}
+            %
+            \tileHTwoKleinB{-1.2}{0}
+            \tileHTwoKleinA{0}{0}
+            \tileHTwoKleinSigma{1.2}{0}
+            \node[scale=2] at (0,-1.2) {$\Downarrow$};
+        \end{tikzpicture}
+    \end{minipage}
+    \begin{minipage}{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.67]
+            \tileHTwoKleinBigZLO{0}{3.6}
+            \tileHTwoKleinBigZRO{1.2}{3.6}
+            \tileHTwoKleinBigZLU{0}{2.4}
+            \tileHTwoKleinBigZRU{1.2}{2.4}
+            %
+            \tileHTwoKleinBigYLO{2.4}{3.6}
+            \tileHTwoKleinBigYRO{3.6}{3.6}
+            \tileHTwoKleinBigYLU{2.4}{2.4}
+            \tileHTwoKleinBigYRU{3.6}{2.4}
+            %
+            \tileHTwoKleinBigPThreeTopLO{4.8}{3.6}
+            \tileHTwoKleinBigPThreeTopRO{6}{3.6}
+            \tileHTwoKleinBigPThreeTopLU{4.8}{2.4}
+            \tileHTwoKleinBigPThreeTopRU{6}{2.4}
+            %
+            \tileHTwoKleinBigHTopLO{7.2}{3.6}
+            \tileHTwoKleinBigHTopRO{8.4}{3.6}
+            \tileHTwoKleinBigHTopLU{7.2}{2.4}
+            \tileHTwoKleinBigHTopRU{8.4}{2.4}
+            %
+            \tileHTwoKleinBigGTopLO{9.6}{3.6}
+            \tileHTwoKleinBigGTopRO{10.8}{3.6}
+            \tileHTwoKleinBigGTopLU{9.6}{2.4}
+            \tileHTwoKleinBigGTopRU{10.8}{2.4}
+            %
+            \tileHTwoKleinBigFTopLO{12}{3.6}
+            \tileHTwoKleinBigFTopRO{13.2}{3.6}
+            \tileHTwoKleinBigFTopLU{12}{2.4}
+            \tileHTwoKleinBigFTopRU{13.2}{2.4}
+            %
+            \tileHTwoKleinBigXLO{14.4}{3.6}
+            \tileHTwoKleinBigXRO{15.6}{3.6}
+            \tileHTwoKleinBigXLU{14.4}{2.4}
+            \tileHTwoKleinBigXRU{15.6}{2.4}
+            %
+            \tileHTwoKleinBigBLO{0}{1.2}
+            \tileHTwoKleinBigBRO{1.2}{1.2}
+            \tileHTwoKleinBigBLU{0}{0}
+            \tileHTwoKleinBigBRU{1.2}{0}
+            %
+            \tileHTwoKleinBigALO{2.4}{1.2}
+            \tileHTwoKleinBigARO{3.6}{1.2}
+            \tileHTwoKleinBigALU{2.4}{0}
+            \tileHTwoKleinBigARU{3.6}{0}
+            %
+            \tileHTwoKleinBigPThreeLO{4.8}{1.2}
+            \tileHTwoKleinBigPThreeRO{6}{1.2}
+            \tileHTwoKleinBigPThreeLU{4.8}{0}
+            \tileHTwoKleinBigPThreeRU{6}{0}
+            %
+            \tileHTwoKleinBigHLO{7.2}{1.2}
+            \tileHTwoKleinBigHRO{8.4}{1.2}
+            \tileHTwoKleinBigHLU{7.2}{0}
+            \tileHTwoKleinBigHRU{8.4}{0}
+            %
+            \tileHTwoKleinBigGLO{9.6}{1.2}
+            \tileHTwoKleinBigGRO{10.8}{1.2}
+            \tileHTwoKleinBigGLU{9.6}{0}
+            \tileHTwoKleinBigGRU{10.8}{0}
+            %
+            \tileHTwoKleinBigFLO{12}{1.2}
+            \tileHTwoKleinBigFRO{13.2}{1.2}
+            \tileHTwoKleinBigFLU{12}{0}
+            \tileHTwoKleinBigFRU{13.2}{0}
+            %
+            \tileHTwoKleinBigSigmaLO{14.4}{1.2}
+            \tileHTwoKleinBigSigmaRO{15.6}{1.2}
+            \tileHTwoKleinBigSigmaLU{14.4}{0}
+            \tileHTwoKleinBigSigmaRU{15.6}{0}
+        \end{tikzpicture}
+    \end{minipage}
+\end{frame}
+
+\begin{frame}[t]{Evaluation}
+    \begin{itemize}
+        \item aTAM, kTAM, 2HAM, kTHAM verschiedene Assembly-Modelle, die zur Auswahl stehen
+        \begin{itemize}
+            \item aTAM nicht für Messungen von Laufzeiten geeignet
+            \item kTHAM und 2HAM wegen Rechenleistung nach langen Simulationsläufen aufgegeben 
+        \end{itemize}
+        \item \textbf{\color{uzl_oceangreen}{kTAM}} gut, aber nicht nicht so genau wie bspw. kTHAM
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Evaluation}
+    \begin{itemize}
+        \item Beispielhafte \textbf{\color{uzl_oceangreen}{Messergebnisse}} eines Tilesets, welches um kein, zwei, acht und 20 Prioritätslevel erweitert wird
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \begin{tikzpicture}[scale=0.68]
+            \begin{axis}[
+                ymin=1, ymax=30000,
+                boxplot/draw direction=y,
+                ylabel={kTAM Schritte},
+                xlabel={},
+                xmajorgrids=true,
+                xtick={1,2,3,4},
+                xticklabels={P0,P2,P8,P20},
+                xticklabel style={align=center, font=\small},
+                xtick align=inside,
+                xticklabel pos=right
+            ]
+            
+            \addplot+[
+                draw = uzl_oceangreen,
+                boxplot prepared={
+                    lower whisker=686,
+                    lower quartile=1804,
+                    median=2228,
+                    upper quartile=2840,
+                    upper whisker=4872
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                draw = uzl_red_2,
+                boxplot prepared={
+                    lower whisker=1766,
+                    lower quartile=3796,
+                    median=4706,
+                    upper quartile=5342,
+                    upper whisker=6976
+                }
+            ] coordinates {};
+            
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=3776,
+                    lower quartile=5106,
+                    median=6172,
+                    upper quartile=8010,
+                    upper whisker=12224
+                }
+            ] coordinates {};
+                
+            \addplot+[
+                boxplot prepared={
+                    lower whisker=5114,
+                    lower quartile=6830,
+                    median=9171,
+                    upper quartile=13994,
+                    upper whisker=27694
+                }
+            ] coordinates {}; 
+    
+            \end{axis}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Evaluation}
+    \begin{itemize}
+        \item Allgemeine Ergebnisse 
+        \begin{itemize}
+            \item Wenn das \textbf{\color{uzl_oceangreen}{Tileset wächst}}, werden die Messungen in kTAM extremer
+            \item Wenn die \textbf{\color{uzl_oceangreen}{Assembly wächst}}, werden die Messungen in kTAM bedeutend länger
+        \end{itemize}
+        \item Konkrete Ergebnisse 
+        \begin{itemize}
+            \item Generierte Tilesets, Wenige Flags, Prioritätslevel, Acknowledgements gut
+            \item Viele Flags (3-10), Prüfsummen, Snaked Proofreading sehr aufwendig, aber Machbarkeitsbeweis gegeben
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Evaluation}
+    \begin{itemize}
+        \item Auch aufwendige Mechanismen können sinnvoll sein
+    \end{itemize}
+    \begin{figure}
+        \centering 
+        \begin{tikzpicture}[scale=0.75]
+            % Slide 1
+            \onslide<1->{\tileHThreeNormU{-1.2}{-1.2}}
+            \onslide<1->{\tileHThreeNormBAlt{0}{1.2}}
+            \onslide<1->{\tileHThreeNormT{0}{-1.2}}
+            \onslide<1->{\tileHThreeNormA{1.2}{1.2}}
+            \onslide<1->{\tileHThreeNormSigma{1.2}{0}}
+            \onslide<1->{\tileHThreeNormS{1.2}{-1.2}}
+            \onslide<1->{\draw[green, thick] (0,0) circle (2.5cm);}
+            % Slide 2
+            \onslide<2-3>{\draw[green, thick, ->] (1.5,2) to[bend left] (3.7,2);}
+            \onslide<2-3>{\node[scale=1.5] at (1.7,3.1) {$+$};}
+            \onslide<2-3>{\tileHThreeNormOne{2.7}{3.1}}
+            \onslide<2-3>{\tileHThreeNormU{4}{-1.2}}
+            \onslide<2-3>{\tileHThreeNormBAlt{5.2}{1.2}}
+            \onslide<2-3>{\tileHThreeNormOne{5.2}{0}}
+            \onslide<2-3>{\tileHThreeNormT{5.2}{-1.2}}
+            \onslide<2-3>{\tileHThreeNormA{6.4}{1.2}}
+            \onslide<2-3>{\tileHThreeNormSigma{6.4}{0}}
+            \onslide<2-3>{\tileHThreeNormS{6.4}{-1.2}}
+            \onslide<2-3>{\draw[green, thick] (5.2,0) circle (2.5cm);}
+            % Slide 3
+            \only<3>{\draw[green, thick, ->] (6.7,2) to[bend left] (8.9,2);}
+            \only<3>{\node[scale=1.5] at (6.9,3.1) {$+$};}
+            \only<3>{\tileHThreeNormC{7.9}{3.1}}
+            \only<3>{\node at (9.2,0) {$\cdots$};}
+            % Slide 5
+            \onslide<5->{\draw[orange, thick, ->] (1.6,2) to[bend left] (3.7,2);}
+            \onslide<5->{\node[scale=1.5] at (1.7,3.1) {$+$};}
+            \onslide<5->{\tileHThreeNormBAlt{2.7}{3.1}}
+            \onslide<5->{\tileHThreeNormU{4}{-1.2}}
+            \onslide<5->{\tileHThreeNormBAlt{5.2}{1.2}}
+            \onslide<5->{\tileHThreeNormBAlt{5.2}{0}}
+            \onslide<5->{\tileHThreeNormT{5.2}{-1.2}}
+            \onslide<5->{\tileHThreeNormA{6.4}{1.2}}
+            \onslide<5->{\tileHThreeNormSigma{6.4}{0}}
+            \onslide<5->{\tileHThreeNormS{6.4}{-1.2}}
+            \onslide<5->{\draw[orange, thick] (5.2,0) circle (2.5cm);}
+            % Slide 6
+            \onslide<6->{\draw[green, thick] (5.2,-0.6) circle (0.2cm);}
+            \onslide<6->{\draw[blue, thick] (5.2,0.6) circle (0.2cm);}
+            \onslide<6->{\draw[blue, thick] (5.8,0.25) circle (0.2cm);}
+            \onslide<6->{\draw[blue, thick] (5.8,-0.25) circle (0.2cm);}
+            \onslide<6->{\draw[red, thick, ->] (3.7,-2) to[bend left] (1.6,-2);}
+            \onslide<6->{\node[scale=1.5] at (1.7,-3.1) {$-$};}
+            \onslide<6->{\tileHThreeNormBAlt{2.7}{-3.1}}
+            % Slide 7
+            \onslide<7->{\tileHThreeNormC{9.2}{0}}
+            \onslide<7->{\tileHThreeNormU{9.2}{-1.2}}
+            \onslide<7->{\tileHThreeNormBAlt{10.4}{1.2}}
+            \onslide<7->{\tileHThreeNormBAlt{10.4}{0}}
+            \onslide<7->{\tileHThreeNormT{10.4}{-1.2}}
+            \onslide<7->{\tileHThreeNormA{11.6}{1.2}}
+            \onslide<7->{\tileHThreeNormSigma{11.6}{0}}
+            \onslide<7->{\tileHThreeNormS{11.6}{-1.2}}
+            \onslide<7->{\draw[red, thick] (10.4,0) circle (2.5cm);}
+            \onslide<7->{\draw[red, thick, ->] (6.7,2) to[bend left] (8.9,2);}
+            \onslide<7->{\node[scale=1.5] at (6.8,3.1) {$+$};}
+            \onslide<7->{\tileHThreeNormC{7.8}{3.1}}
+            % Slide 8
+            \onslide<8->{\draw[dashed, thick, ->] (8.9,-2) to[bend left] (6.7,-2);}
+            \onslide<8->{\draw[green, thick] (10.4,-0.6) circle (0.2cm);}
+            \onslide<8->{\draw[blue, thick] (10.4,0.6) circle (0.2cm);}
+            \onslide<8->{\draw[blue, thick] (11,0.25) circle (0.2cm);}
+            \onslide<8->{\draw[blue, thick] (11,-0.25) circle (0.2cm);}
+            \onslide<8->{\draw[green, thick] (9.8,0.25) circle (0.2cm);}
+            \onslide<8->{\draw[green, thick] (9.8,-0.25) circle (0.2cm);}
+            \onslide<8->{\draw[green, thick] (9.2,-0.6) circle (0.2cm);}
+        \end{tikzpicture}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]{Zusammenfassung und Aussicht}
+    \begin{itemize}
+        \item Zusammenfassung
+        \begin{itemize}
+            \item die Arbeit bietet einen umfassenden Überblick von Mechanismen, die \textbf{\color{uzl_oceangreen}{sinnvoll auf die DNA-Tile-basierte Nanoebene übertragen werden können}} 
+        \end{itemize}
+        \item Aussicht
+        \begin{itemize}
+            \item ein vielversprechendes Themengebiet, besonders in Hinblick auf \textbf{\color{uzl_oceangreen}{medizinische Technologien}}
+            \item trotz jahrelanger Forschung immer noch in den Kinderschuhen 
+            \item auf Basis dieser Arbeit können \textbf{\color{uzl_oceangreen}{weitere Mechanismen}} betrachtet werden (siehe Arbeit Kapitel 7)
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\contactpage
+
+\end{document}

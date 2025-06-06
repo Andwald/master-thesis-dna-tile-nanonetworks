@@ -1,0 +1,111 @@
+\documentclass[
+	ngerman,
+	11pt,
+	twoside,
+	a4paper,
+	headsepline,
+	footsepline,
+	toc=bib
+]{scrbook}
+% \makeatletter
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+% \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+% \DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+% \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+% \DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+
+
+\include{commands}
+%Extra tex-Datei für alle definierten Tikz-Tiles
+\include{tikz_tiles}
+%\include{tikz_tiles_non_colored}
+
+%Hier Name des bib files einfügen
+\addbibresource{sources.bib}
+%Ref
+\usepackage[ngerman]{cleveref}
+
+% Nette Hinweise zum LaTexen einer Diss:
+% - http://iacweb.ethz.ch/en/various/Mittelbau/disslatex.html
+% - http://www.zib.de/pfetsch/Diss-Styles/
+% - http://www2.informatik.hu-berlin.de/~nlohmann/arbeit/koma.html
+
+\begin{document}
+\selectlanguage{ngerman}
+
+\crefname{listing}{Programmcode}{Programmcodes}
+\Crefname{listing}{Programmcode}{Programmcodes}
+\frontmatter
+
+%---------------------------------------------------------------------------
+% Todos
+%---------------------------------------------------------------------------
+
+% Alle Todos und diese Liste können einfach in der commands.tex deaktiviert
+% werden ~Zeile 171
+%
+%\newpage
+%Verhindert Konflikt mit Appendix
+%\pagenumbering{Alph}
+%\setcounter{page}{1}
+%\listoftodos[Todo-Liste]
+%\thispagestyle{empty}
+
+%---------------------------------------------------------------------------
+% Frontpage
+%---------------------------------------------------------------------------
+
+	\input{0-titlepage.tex}
+	\thispagestyle{empty}
+
+%---------------------------------------------------------------------------
+% Inhaltsverzeichnis
+%---------------------------------------------------------------------------
+	\tableofcontents
+	\thispagestyle{empty}
+	\cleardoublepage
+
+%---------------------------------------------------------------------------
+% Der eigentliche Inhalt
+%---------------------------------------------------------------------------
+	\mainmatter
+
+	\include{1-einleitung}
+	\include{2-grundlagen}
+	\include{3-relatedwork}
+	\include{4-konzept}
+	\include{5-konstruktion}
+	\include{6-simulationen}
+	\include{7-zusammenfassung}
+	%\include{8-besprechungen}
+
+
+%---------------------------------------------------------------------------
+% Anhang
+%---------------------------------------------------------------------------
+	\newpage
+	\pagenumbering{roman}
+	\setcounter{page}{1}
+	\appendix
+
+
+		\listoffigures
+
+	    \listoftables
+
+		\lstlistoflistings
+
+		%---------------------------------------------------------------------------
+
+    %using: \abk{Abk.}{Abkürzung}
+		\printnomenclature
+
+		\printbibliography
+
+	\input{appendix/appendix.tex}
+
+    \printindex
+
+\end{document}

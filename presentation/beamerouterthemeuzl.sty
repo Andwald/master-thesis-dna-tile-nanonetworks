@@ -1,0 +1,31 @@
+\mode<presentation>
+
+% Frame title
+\defbeamertemplate*{frametitle}{uzl}[1][]
+{
+\vskip1cm%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.2cm]{frametitle}
+    \begin{tikzpicture}
+      \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+      \fill[uzl_oceangreen_70] (0,-7.4) rectangle(\the\paperwidth,-7);
+       \ifx\insertframesubtitle\@empty%
+          {\node[uzl_oceangreen_80,font=\LARGE, text width = 8cm, align=right] at (8.5,1.25){\textbf{\insertframetitle}};}
+      \else%
+          {\node[uzl_oceangreen_80,font=\Large, text width = 8cm, align=right] at (8.5,1.5){\textbf{\insertframetitle}};%
+           \node[uzl_oceangreen_80,font=\small, text width = 8cm, align = right] at (8.5,1){\insertframesubtitle};}%
+          \fi
+          
+      \node[white, text opacity=0.8, font={\smaller[3]}, anchor=west]
+      at (0.5, -7.2)
+      {\strut\insertshorttitle};
+
+      \node[white, text opacity=0.8, font={\smaller[3]},anchor=east]
+      at (12.3, -7.2)
+      {\strut\insertframenumber /\inserttotalframenumber};
+
+    \end{tikzpicture}
+  \end{beamercolorbox}
+  \vspace{-7mm}
+}
+
+\mode<all>
